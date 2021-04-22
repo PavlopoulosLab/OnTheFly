@@ -1,0 +1,1 @@
+perl -pe  's/<script.*?<.script>//imsg'  $1| perl -pe 's/<span class="_ _\w+"><\/span>//imsg' | perl -pe 's/<span class="_ _\w+"> <\/span>/ /imsg' | perl -pe 's/<span class="_"> <\/span>/ /imsg' | perl -pe 's/<span class="ls\w+ ws\w+">//imsg'
