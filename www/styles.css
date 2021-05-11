@@ -1,0 +1,556 @@
+a[data-value = 'Stitch'], a[data-value = 'String'] {
+  margin-left: 15px;
+}
+
+a[data-value^="FE_"]{
+  margin-left:15px;
+}
+
+/* Caret icon in Analyze data tab */
+.sidebar-menu li.active  a  .fa-angle-left {
+  transform: rotate(-90deg);
+}
+
+
+
+/* hr of the Welcome text */
+hr {
+  border-top: 1px solid rgb(31, 191, 164);
+}
+
+/* Paragraphs of the Welcome text */
+#paragraphs {
+  text-align: justify;
+  text-justify: inner-word;
+  font-size: 16px;
+}
+
+/* Text under the download button */
+p[id^="downloadtext"] {
+  text-align: center;
+  font-size: 10px;
+  color: cadetblue;
+  margin-top: 10px;
+}
+
+/* SidebarPanel margin */
+form[class^="well"] {
+  margin-bottom: 380px;
+}
+
+#textinput::placeholder {
+  font-size: 13px;
+}
+
+/* Loader in functional enrichment tab */
+.shiny-notification {
+  height: 80px;
+  width: 700px;
+  position: fixed;
+  top: calc(50% - 50px);
+  left: calc(60% - 10px);
+}
+
+/* Iframe that contains uploaded files */
+.pdf_frame{
+  height: 550px;
+  width:100%;
+  box-shadow: 4px 4px 11px #000;
+  border-radius: 8px;
+  -webkit-box-shadow: 4px 4px 14px rgb(54, 54, 54);
+  display:block;
+}
+
+/* Selectize input style */
+.selectize-input {
+  background-color: #2c3e50 !important;
+  color: white !important;
+}
+[id$="selectized"] {
+    color: white !important;
+}
+[id$="selectized"]::placeholder {
+    color: white !important;
+    opacity: 1 !important;
+}
+.selectize-control.single .selectize-input::after {
+  content: ' ';
+  position: absolute;
+  top: 50%;
+  right: 17px;
+  margin-top: -3px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 5px 0 5px;
+  border-color: white transparent transparent transparent;  
+}
+  
+.selectize-control.single .selectize-input.dropdown-active::after {
+  border: 2px solid rgba(0,0,0,.2);
+  border-width: 5px 5px 0 5px;
+  border-color: white transparent transparent transparent;
+  margin-top: -2px;
+}
+
+/* Name of tabs in tabboxes */
+.nav-tabs-custom .nav-tabs li.active:hover a, .nav-tabs-custom .nav-tabs li.active a {
+  background-color: transparent;
+  border-bottom-color:darkslategrey;
+  border-bottom-width: 3px;
+  border-radius: 0px;
+  color:rgb(31, 191, 164);
+}
+
+.nav-tabs-custom .nav-tabs li.active:hover a {
+  color: darkslategrey;
+}
+
+.nav-tabs-custom .nav-tabs li.active a {
+  color: darkslategrey;
+}
+
+.nav-tabs-custom .nav-tabs li.active {
+  border-top-color: white;
+}
+
+/* Dimensions of tabboxes */
+.nav-tabs-custom {
+  height: 750px !important;
+  /*height: 150vh;*/
+  width: 210% !important;
+}
+
+/* Tabboxes' style */
+.box {
+  background-color: transparent;
+  margin-left: -5px;
+  margin-top: -10px;
+  height: 50px;
+  margin-bottom: 170px;
+}
+
+/* Tabbox that contains the files and entities */
+#tabset {
+  margin-top: 10px;
+  background-color: white;
+  margin-bottom: 0px;
+  height: 50px;
+}
+
+/* Zoom bar */
+span[class*=" js-irs-"] .irs-bar {
+  border-top-color:rgb(31, 191, 164);
+  border-bottom-color:rgb(31, 191, 164);
+} 
+
+span[class*=" js-irs-"] .irs-bar-edge {
+  border-color:rgb(31, 191, 164);
+}
+  
+span[class*=" js-irs-"] .irs-single, span[class*=" js-irs-"] .irs-bar-edge, span[class*=" js-irs-"] .irs-bar {
+  background:rgb(31, 191, 164);
+}
+
+/* Info divs */
+div[id^="info"], div[id^="dataset_info"], div[id^="dataset_null"] {
+  border-left: 5px solid #2e4353;
+  margin-bottom: -5px;
+  display: none;
+}
+
+div[id^="selinfo"] {
+  background-color: #e7f3fe;
+  border-left: 5px solid #2e4353;
+  margin-bottom: -5px;
+}
+
+div[id^="sel_info"], div[id^="analyzeinfo"] {
+  border-left: 5px solid #365c48;
+  margin-bottom: -5px;
+  display: none;
+  font-size:18px;
+  display:none
+}
+
+
+
+/* Buttons */
+#rename, #addtext {
+  color: #fff;
+  background-color:rgb(31, 191, 164);
+  border-color: lightseagreen;
+  font-size: 16px;
+  text-transform: capitalize;
+}
+
+#remove {
+  color:#fff;
+  background-color:firebrick;
+  border-color:#dc3545;
+  font-size: 16px;
+  text-transform: capitalize;
+}
+
+button[id^="showhide"] {
+  background-color: transparent;
+  color: darkslategray;
+  margin-left: 95%;
+  border-color: transparent;
+}
+
+button[id^="annotationbtn"] {
+  border-color: dimgray;
+  text-transform: capitalize;
+  margin-left:15px;
+  margin-right:5px;
+  
+}
+
+button[id^="annotreset"] {
+  border-color: dimgray;
+  text-transform: capitalize;
+  margin-left:5px;
+  margin-right:5px;
+}
+
+button[id^="downloadData"] {
+  color: #fff !important;
+  background-color: rgb(31, 191, 164) !important;
+  text-transform: capitalize;
+  font-size: 17px !important;
+  margin-left: 22px;
+}
+
+button[id^="collect"] {
+  font-size:13px !important;
+  border-color: dimgray;
+  text-transform: capitalize;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+#collect_Pfam {
+  background-color: #597164 !important;
+  color:white !important;
+}
+#collect_Pfam:focus {
+  background-color: #2c3e50 !important;
+  color: white !important;
+}
+
+button[id^="reset_dataset"] {
+  font-size:13px !important;
+  border-color: dimgray;
+  text-transform: capitalize;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+button[id^="select"] {
+  border-color: dimgray;
+  text-transform: capitalize;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  /*display: none;*/
+}
+/*
+button[id^="reset"] {
+  border-color: dimgray;
+  text-transform: capitalize;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: none;
+}*/
+
+button[id^="download"] {
+  border-color: dimgray;
+  text-transform: capitalize;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#delete_all {
+  color:#fff;
+  background-color:firebrick;
+  border-color:#dc3545;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  display: none;
+}
+
+#delete_all_PMID {
+  color:#fff;
+  background-color:firebrick;
+  border-color:#dc3545;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  display: none;
+}
+
+#delete_all_Pfam {
+  color:#fff;
+  background-color:firebrick;
+  border-color:#dc3545;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  display: none;
+}
+
+#delete_all_network_STRING {
+  color:#fff;
+  background-color:firebrick;
+  border-color:#dc3545;
+  font-size: 15px;
+  text-transform: capitalize;
+  display: none;
+}
+
+#delete_all_network_STITCH {
+  color:#fff;
+  background-color:firebrick;
+  border-color:#dc3545;
+  font-size: 15px;
+  text-transform: capitalize;
+  display: none;
+}
+
+#analyze {
+  color: #fff;
+  background-color: rgb(31, 191, 164);
+  border-color: dimgray;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-top: 10px;
+  margin-left: 17%;
+  display: none;
+}
+
+#analyze_PMID {
+  color: #fff;
+  background-color: rgb(31, 191, 164);
+  border-color: dimgray;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-top: 10px;
+  margin-left: 17%;
+  display: none;
+}
+
+#analyze_Pfam {
+  color: #fff;
+  background-color: rgb(31, 191, 164);
+  border-color: dimgray;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-top: 10px;
+  margin-left: 17%;
+  display: none;
+}
+
+#network_string {
+  color: #fff;
+  background-color: rgb(31, 191, 164);
+  border-color: dimgray;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-top: 10px;
+  margin-left: 2%;
+  display: none;
+}
+
+#network_stitch {
+  color: #fff;
+  background-color: rgb(24, 49, 71);
+  border-color: dimgray;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-top: 10px;
+  margin-left: 15px;
+  display: none;
+}
+
+/* Datatables */
+[id^="tblentities"] tbody tr:hover {
+  color:rgb(31, 191, 164);
+}
+
+[id^="tblentities"] tr.selected {
+  font-weight: bold !important;
+}
+
+#collected_dataset_table tbody tr:hover {
+  background-color: rgb(158, 45, 45) !important;
+  color: white !important;
+  font-weight: bold !important;
+  background-image: url("images/garbage.png");
+  background-repeat: no-repeat;
+  background-size: 25px 25px;
+  background-position: 98% 50%;
+}
+
+#sel_analysis tbody tr:hover {
+  background-color: rgb(158, 45, 45) !important;
+  color: white !important;
+  font-weight: bold !important;
+  background-image: url("images/garbage.png");
+  background-repeat: no-repeat;
+  background-size: 25px 25px;
+  background-position: 98% 50%;
+}
+
+#sel_analysis_PMID tbody tr:hover {
+  background-color: rgb(158, 45, 45) !important;
+  color: white !important;
+  font-weight: bold !important;
+  background-image: url("images/garbage.png");
+  background-repeat: no-repeat;
+  background-size: 25px 25px;
+  background-position: 98% 50%;
+}
+
+#sel_analysis_network_STRING {
+  margin-top: 25px;
+}
+
+#sel_analysis_network_STRING tbody tr:hover {
+  background-color: rgb(158, 45, 45) !important;
+  color: white !important;
+  font-weight: bold !important;
+  background-image: url("images/garbage.png");
+  background-repeat: no-repeat;
+  background-size: 25px 25px;
+  background-position: 98% 50%;
+}
+
+
+#sel_analysis_network_STITCH {
+  margin-top: 25px;
+}
+
+#sel_analysis_network_STITCH tbody tr:hover {
+  background-color: rgb(158, 45, 45) !important;
+  color: white !important;
+  font-weight: bold !important;
+  background-image: url("images/garbage.png");
+  background-repeat: no-repeat;
+  background-size: 25px 25px;
+  background-position: 98% 50%;
+}
+
+
+#FE_results thead, #FE_results th {
+  text-align: center;
+}
+
+/* radiobuttons */
+.radio {
+  margin-bottom: 15px;
+}
+
+/* STRINGdb network div */
+.string_db_network {
+  border: 2px solid black;
+}
+
+/* STRINGdb network image */
+#svg_network_image {
+  width: 1190px;
+  vertical-align: middle !important;
+}
+
+/* footer */
+.main-footer {
+  height: 40px;
+  font-size: small;
+  color: white;
+  background-color: rgb(31, 191, 164);
+  text-align: center;
+  padding: 10px;
+}
+
+
+#nodata_FE_info, #nodata_PMID_info, #nodata_Pfam_info, #noresults_FE_info, #nodata_create_dataset, #nodata_STRING_info, #nodata_STITCH_info  {
+  background-color: rgba(31, 191, 164, 0.507);
+  color: #2e4353;
+  font-size: 26px;
+  text-align: center;
+  border-radius: 4px;
+  border-left: 7px solid #2e4353;
+  height: 67px;
+  margin: 0 0 10px;
+  margin-top: 100px;
+}
+
+/* prettyCheckboxGroup */
+.pretty.p-default input:checked~.state label:after {
+  background-color: rgb(31, 191, 164) !important;
+}
+
+/* Create dataset tab - checkbox label */
+label[for^="tbl_select"] {
+  margin-bottom: 15px;
+}
+
+
+/*Cookie Consent Begin*/
+#cookieConsent {
+    background-color: rgba(40,40,40,0.8);
+    min-height: 26px;
+    font-size: 14px;
+    color: #ccc;
+    line-height: 26px;
+    padding: 8px 0 8px 30px;
+    font-family: "Trebuchet MS",Helvetica,sans-serif;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: none;
+    z-index: 9999;
+    text-align:right;
+    float:right;
+}
+#cookieConsent a {
+    color: #4B8EE7;
+    text-decoration: none;
+}
+#closeCookieConsent {
+    float: right;
+    display: inline-block;
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+    margin: -15px 0 0 0;
+    font-weight: bold;
+    text-align:left;
+}
+#closeCookieConsent:hover {
+    color: #FFF;
+}
+#cookieConsent a.cookieConsentOK {
+    display: inline-block;
+    border-radius: 5px;
+    padding: 0 20px;
+    cursor: pointer;
+    float: right;
+    margin: 0 60px 0 10px;
+    background-color: rgb(31, 191, 164) !important;
+    color:white !important;
+    text-align:right;
+
+}
+#cookieConsent a.cookieConsentOK:hover {
+    background-color: #E0C91F !important;
+    color: black !important;
+}
+
+/*Cookie Consent End*/

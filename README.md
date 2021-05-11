@@ -26,13 +26,16 @@ Online version: http://bib.fleming.gr:3838/OnTheFly/
 - Operating System: Linux (any distribution), Windows with WSL (Windows Subsystem for Linux) or another Unix-like compatibility layer (e.g. Cygwin)
 - [R](https://www.r-project.org/) version >= 3.6.1
 - [R-studio](https://www.rstudio.com/)  | **Note:** If **not** installed, the **shiny-server** R package is required for deployment
+- [poppler](https://poppler.freedesktop.org/) (specifically, the poppler-utils and poppler-data packages)
 - [pdf2htmlEX](https://pdf2htmlex.github.io/pdf2htmlEX/)
 - [LibreOffice](https://www.libreoffice.org/get-help/install-howto/linux/) and the [unoconv](https://github.com/unoconv/unoconv) utility
 - [Tesseract](https://github.com/tesseract-ocr/tesseract) (OCR scanning), the associated english and math training data ([tessdata](https://github.com/tesseract-ocr/tessdata) or [tessdata_fast](https://github.com/tesseract-ocr/tessdata_fast)) and the [OCRMyPDF](https://ocrmypdf.readthedocs.io/en/latest/) wrapper
 - [ImageMagick](https://imagemagick.org/index.php) and [Ghostscript](https://www.ghostscript.com/)
 - [curl](https://curl.se/), [libcurl](https://curl.se/libcurl/) and [libcurl4-openssl-dev](https://pkgs.org/download/libcurl4-openssl-dev) (required for the installation of the curl library in R)
 
-**Note:** Almost all of the above can be installed through your Linux distribution's  package manager (apt, zypper etc).  An installation bash script ("install_dependencies.sh") is offered to automate setup in Debian and Debian-based (Ubuntu, Mint, etc) distributions.  In Windows, users need to either install [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and [set-up a Linux distribution](https://www.microsoft.com/en-us/search/shop/apps?q=Linux) or use a compatibility layer like [Cygwin](https://www.cygwin.com/).  However, Cygwin users will need to manually compile all the required packages by source.
+**Note: 1** Almost all of the above can be installed through your Linux distribution's  package manager (apt, zypper etc).  **An installation bash script ("install_dependencies.sh") is offered to automate setup in Debian and Debian-based (Ubuntu, Mint, etc) distributions**.  In Windows, users need to either install [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and [set-up a Linux distribution](https://www.microsoft.com/en-us/search/shop/apps?q=Linux) or use a compatibility layer like [Cygwin](https://www.cygwin.com/).  However, Cygwin users will need to manually compile all the required packages by source.
+
+**Note: 2** If you perform a **manual** installation of these packages, make sure **you install pdf2htmlEX last**.  This is because pdf2htmlEX depends on a number of pre-requisites (namely, poppler and a number of libraries for images that are automatically installed alongside ImageMagick and Ghostscript) to achieve full compatibility with all potential PDF encodings that exist.
 
 ### List of required R libraries
 - Shiny
@@ -54,12 +57,13 @@ Online version: http://bib.fleming.gr:3838/OnTheFly/
 - dplyr
 - tidyverse
 - curl
+- httr
 - glue
 - DT
 - xml2
 - httpuv
 
-**Note:** Packages can be installed through R or R-studio. An installation script ("install_libraries.R") is included to automate the process of installing the above.
+**Note:** Packages can be installed through R or R-studio. **An installation script ("install_libraries.R") is included to automate the process of installing the above**.
 
 ----
 
@@ -146,5 +150,6 @@ or
 4.  Install [R](https://cloud.r-project.org/bin/windows/) (version 3.6.1 or newer) and [R-studio](https://www.rstudio.com/products/rstudio/download/#download) for Windows.
 5. Install all required libraries in R (or in R-studio), by loading an running the "install_libraries.R" script.
 6. Open the tool's project file (OnTheFly.rproj) in R-studio and click "Run App".  The first time you do this, your antivirus or firewall may request that you grant access to a program called "wsl".  This is a component of the WSL environment that allows you to run Linux applications in native Windows (i.e. outside the WSL environment). 
+
 
 
