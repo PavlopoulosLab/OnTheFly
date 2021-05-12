@@ -5,6 +5,26 @@
 A text-mining web application for automated named entity recognition, document annotation, network and functional enrichment analysis 
 
 ----
+
+## Table of Contents
+
+1 [Overview](#overview)
+
+2 [Requirements](#requirements)
+  * [System Requirements](#system-requirements)
+  * [List of required R libraries](#list-of-required-r-libraries)
+
+3 [Installation Instructions](#installation-instructions)
+  * [On Linux](#on-linux)
+  * [On Windows](#on-windows)
+    + [Pure WSL installation](#pure-wsl-installation)
+	+ [Hybrid Windows and WSL installation](#hybrid-windows-and-wsl-installation)
+
+4 [Advanced configuration operations](#advanced-configuration-operations)
+ - [Change file size and number limitations](#change-file-size-and-number-limitations)
+ - [Deploy using shiny-server](#deploy-using-shiny-server)
+
+----
 ## Overview
 OnTheFly<sup>2.0</sup>  is a web application to aid users collecting biological information from documents. 
 With OnTheFly<sup>2.0</sup>  one is able to:  
@@ -23,6 +43,7 @@ Online version: http://bib.fleming.gr:3838/OnTheFly/
 ----
 ## Requirements
 ### System requirements
+
 - Operating System: Linux (any distribution), Windows with WSL (Windows Subsystem for Linux) or another Unix-like compatibility layer (e.g. Cygwin)
 - [R](https://www.r-project.org/) version >= 3.6.1
 - [R-studio](https://www.rstudio.com/)  | **Note:** If **not** installed, the **shiny-server** R package is required for deployment
@@ -74,7 +95,7 @@ Linux is the native environment OnTheFly<sup>2.0</sup> is designed to operate in
 1. Install R and R-studio
 2. Install all software dependencies (pdf2htmlEX, libreoffice etc)
 3. Install all required R libraries
-4. Open the tool's project file (OnTheFly.rproj) in R-studio and click "Run App" **or** (alternatively), configure shiny-server and setup OnTherFly as a web service.
+4. Open the tool's project file (OnTheFly.rproj) in R-studio, select **ui.R**, **server.R** or **global.R** and click "Run App" **or** (alternatively), configure shiny-server and setup OnTherFly as a web service.
 
 To aid you in installing and configuring OnTheFly<sup>2.0</sup>, we provide two installation scripts, "install_dependencies.sh" and "install_libraries.R". 
 
@@ -106,7 +127,7 @@ or it can be loaded and Ran in R-studio.
 ### On Windows
 Using OnTheFLy<sup>2.0</sup> on Windows requires the existence of a Linux/Unix-like compatibility layer.  The suggested solution (for Windows 10) is the use of the Windows Subsystem for Linux (WSL) environment.  Alternatively, one can set-up and use a terminal emulator such as Cygwin.  This is the only option for pre-Windows 10 installations (Windows 7, Windows 8 etc), for which WSL is not available.  However, since Cygwin does not, by default, implement the use of package managers like apt (or zypper, rpm etc), the dependencies have to be installed by hand and, in several cases, to be compiled by source.  Below we describe the procedure to install and use OnTheFly<sup>2.0</sup> on a Windows 10 system with WSL.
 
-#### 1. Pure WSL installation
+#### Pure WSL installation
 In this option, everything will be installed in WSL and be operated through the Linux environment in Windows.
 1. Install and configure WSL in your system.  You can find the procedure for doing this in [this](https://www.windowscentral.com/install-windows-subsystem-linux-windows-10) link.
 2. Install and setup (root access, passwords etc) a Linux distribution from the collection available in the [Windows Store](https://www.microsoft.com/en-us/search/shop/apps?q=Linux).  For the purposes of this guide, an Ubuntu or Debian installation is assumed.
@@ -130,11 +151,11 @@ or
 
 (system-wide installation)
 
-6. Open the tool's project file (OnTheFly.rproj) in R-studio and click "Run App":
+6. Open the tool's project file (OnTheFly.rproj) in R-studio, select **ui.R**, **server.R** or **global.R** and click "Run App":
 
 >     rstudio OnTheFly.rproj
 
-#### 2. Hybrid Windows R-studio / WSL installation
+#### Hybrid Windows and WSL installation
 In this case, all of the software dependencies will be installed in WSL, but all R-related operations, including the final application itself, will be controlled by R-studio in native Windows.
 
 1. Install and configure WSL in your system.  You can find the procedure for doing this in [this](https://www.windowscentral.com/install-windows-subsystem-linux-windows-10) link.
@@ -149,7 +170,35 @@ or
 
 4.  Install [R](https://cloud.r-project.org/bin/windows/) (version 3.6.1 or newer) and [R-studio](https://www.rstudio.com/products/rstudio/download/#download) for Windows.
 5. Install all required libraries in R (or in R-studio), by loading an running the "install_libraries.R" script.
-6. Open the tool's project file (OnTheFly.rproj) in R-studio and click "Run App".  The first time you do this, your antivirus or firewall may request that you grant access to a program called "wsl".  This is a component of the WSL environment that allows you to run Linux applications in native Windows (i.e. outside the WSL environment). 
+6. Open the tool's project file (OnTheFly.rproj) in R-studio, select  **ui.R**, **server.R** or **global.R** and click "Run App".  The first time you do this, your antivirus or firewall may request that you grant access to a program called "wsl".  This is a component of the WSL environment that allows you to run Linux applications in native Windows (i.e. outside the WSL environment). 
 
+----
 
+## Advanced configuration operations
 
+### Change file size and number limitations
+By default, OnTheFly<sup>2.0</sup> is configured to accept files with a maximum size of 10 MBs, and to handle up to 10 documents simultaneously. To change these options, open the **global.R** file with R-studio or a text editor, and alter the numerical values of the following two lines:
+>     max_file_size = 10
+>     max_files = 10
+
+Save the altered script and then reload OnTheFly<sup>2.0</sup> (**Note:** If you are using shiny-server, you may have to restart its service for the changes to fully take place).
+
+### Deploy using shiny-server
+As an alternative to R-studio, you can deploy OnTheFly<sup>2.0</sup> as a web service, using **shiny-server**. This procedure requires a number of extra steps to be taken:
+
+1. Install shiny-server. You can find instructions on how to do this using [this](https://www.rstudio.com/products/shiny/download-server/) link.
+2. Configure shiny-server and set-up its service.  You can find instructions on how to adjust the configuration to best fit your system [here](https://docs.rstudio.com/shiny-server/#default-configuration). For the purposes of this guide, we assume that you use the standard configuration:
+	- The port assigned to Shiny apps is **3838**
+	- Shiny apps are located in /srv/shiny-server/ and/or /opt/shiny-server/samples/ (with symbolic links made to /srv/shiny-server/)
+3. Download or clone (with git) the GitHub directory
+>     git clone https://github.com/PavlopoulosLab/OnTheFly.git
+4. Move the downloaded directory to /srv/shiny-server/ directly or, alternatively, to /opt/shiny-server/samples/. In the latter case, create a symbolic link for OnTheFly in the /srv/shiny-server/ directory. In this guide, we will follow the second option:
+>     sudo mv OnTheFly /opt/shiny-server/samples/
+>	  sudo ln -s /opt/shiny-server/samples/OnTheFly/ /srv/shiny-server/OnTheFly/
+5. Change the owner of the OnTheFly directory to shiny
+>     sudo chown shiny -R /opt/shiny-server/samples/OnTheFly/
+6. Change the read/write/execute permissions for the temporary files directory, located in OnTheFly/www/tmp/:
+>     sudo chmod 766 -R /opt/shiny-server/samples/onTheFly/www/tmp/
+7. Restart shiny-server to apply all changes:
+>     sudo service shiny-server restart
+8. Open your favorite web browser and visit http://localhost:3838/OnTheFly/.
