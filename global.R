@@ -34,9 +34,8 @@ max_files = 10 #10 files max
 
 #stop editing from here on
 
-#global system paths, gprofiler url, setting filesize computationally
+#global system paths, setting filesize computationally
 Sys.setenv(LD_LIBRARY_PATH = "/usr/lib/libreoffice/program/:$LD_LIBRARY_PATH")
-set_base_url("http://biit.cs.ut.ee/gprofiler_archive3/e102_eg49_p15")
 
 options(shiny.maxRequestSize = max_file_size*1024^2) #maximum file size: 10 MB
 
