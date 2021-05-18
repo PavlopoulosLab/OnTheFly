@@ -1,5 +1,6 @@
 
 
+
 # OnTheFly<sup>2.0</sup>
 
 A text-mining web application for automated named entity recognition, document annotation, network and functional enrichment analysis 
@@ -36,9 +37,9 @@ With OnTheFly<sup>2.0</sup>  one is able to:
 -   Perform functional enrichment analysis on a selected group of terms.
 -   Generate and visualize protein-protein and protein-chemical interaction networks.
 
-----
+Online version: http://onthefly.pavlopouloslab.info, http://bib.fleming.gr:3838/OnTheFly/
 
-Online version: http://bib.fleming.gr:3838/OnTheFly/
+**Publication:** Baltoumas, F.A., Zafeiropoulou, S., Karatzas, E., Pagkaramian, S., Thanati, F., Iliopoulos, I., Eliopoulos, A.G.,  Schneider, R., Jensen, L.J., Pafilis, E., Pavlopoulos, G.A. (2021) **OnTheFly<sup>2.0</sup>: a text-mining web application for automated biomedical entity recognition, document annotation, network and functional enrichment analysis**. *bioRxiv* 2021.05.14.444150. doi: [10.1101/2021.05.14.444150](https://doi.org/10.1101/2021.05.14.444150)
 
 ----
 ## Requirements
@@ -189,10 +190,10 @@ As an alternative to R-studio, you can deploy OnTheFly<sup>2.0</sup> as a web se
 1. Install shiny-server. You can find instructions on how to do this using [this](https://www.rstudio.com/products/shiny/download-server/) link.
 2. Configure shiny-server and set-up its service.  You can find instructions on how to adjust the configuration to best fit your system [here](https://docs.rstudio.com/shiny-server/#default-configuration). For the purposes of this guide, we assume that you use the standard configuration:
 	- The port assigned to Shiny apps is **3838**
-	- Shiny apps are located in /srv/shiny-server/ and/or /opt/shiny-server/samples/ (with symbolic links made to /srv/shiny-server/)
+	- Shiny apps are located in `/srv/shiny-server/` and/or `/opt/shiny-server/samples/` (with symbolic links made to `/srv/shiny-server/`)
 3. Download or clone (with git) the GitHub directory
 >     git clone https://github.com/PavlopoulosLab/OnTheFly.git
-4. Move the downloaded directory to /srv/shiny-server/ directly or, alternatively, to /opt/shiny-server/samples/. In the latter case, create a symbolic link for OnTheFly in the /srv/shiny-server/ directory. In this guide, we will follow the second option:
+4. Move the downloaded directory to `/srv/shiny-server/` directly or, alternatively, to `/opt/shiny-server/samples/`. In the latter case, create a symbolic link for OnTheFly in the `/srv/shiny-server/` directory. In this guide, we will follow the second option:
 >     sudo mv OnTheFly /opt/shiny-server/samples/
 >	  sudo ln -s /opt/shiny-server/samples/OnTheFly/ /srv/shiny-server/OnTheFly/
 5. Change the owner of the OnTheFly directory to shiny
