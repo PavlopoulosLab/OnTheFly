@@ -199,7 +199,7 @@ As an alternative to R-studio, you can deploy OnTheFly<sup>2.0</sup> as a web se
 5. Change the owner of the OnTheFly directory to shiny
 >     sudo chown shiny -R /opt/shiny-server/samples/OnTheFly/
 6. Change the read/write/execute permissions for the temporary files directory, located in OnTheFly/www/tmp/:
->     sudo chmod 766 -R /opt/shiny-server/samples/onTheFly/www/tmp/
+>     sudo chmod 766 -R /opt/shiny-server/samples/OnTheFly/www/tmp/
 7. Restart shiny-server to apply all changes:
 >     sudo service shiny-server restart
 8. Open your favorite web browser and visit http://localhost:3838/OnTheFly/.
