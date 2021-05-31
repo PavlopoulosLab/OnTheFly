@@ -61,7 +61,7 @@ ui <- shinyUI(
                   hr(),
                   HTML("<p style='font-size:15px'>If you find OnTheFly<sup>2.0</sup> useful in your work please cite:</p>
                        <ul>
-                       <li>Baltoumas, F.A., Zafeiropoulou, S., Karatzas, E., Pagkaramian, S., Thanati, F., Iliopoulos, I., Eliopoulos, A.G.,  Schneider, R., Jensen, L.J., Pafilis, E., Pavlopoulos, G.A. (2021) <b>OnTheFly<sup>2.0</sup>: a text-mining web application for automated biomedical entity recognition, document annotation, network and functional enrichment analysis</b>. <i>bioRxiv</i> 2021.05.14.444150. doi: 10.1101/2021.05.14.444150</li>
+                       <li>Baltoumas, F.A., Zafeiropoulou, S., Karatzas, E., Paragkamian, S., Thanati, F., Iliopoulos, I., Eliopoulos, A.G.,  Schneider, R., Jensen, L.J., Pafilis, E., Pavlopoulos, G.A. (2021) <b>OnTheFly<sup>2.0</sup>: a text-mining web application for automated biomedical entity recognition, document annotation, network and functional enrichment analysis</b>. <i>bioRxiv</i> 2021.05.14.444150. doi: 10.1101/2021.05.14.444150</li>
                        <li>Pavlopoulos, G.A., Jensen, L.J., Pafilis, E., Kuhn, M., Hooper, S.D., Schneider, R. (2009) <b>OnTheFly: a tool for automated document-based text annotation, data linking and network generation</b>. <i>Bioinformatics</i>, Apr 1;25(7):977-8. doi: 10.1093/bioinformatics/btp081.</li>
                        </ul>")
                   

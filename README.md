@@ -39,7 +39,7 @@ With OnTheFly<sup>2.0</sup>  one is able to:
 
 Online version: http://onthefly.pavlopouloslab.info, http://bib.fleming.gr:3838/OnTheFly/
 
-**Publication:** Baltoumas, F.A., Zafeiropoulou, S., Karatzas, E., Pagkaramian, S., Thanati, F., Iliopoulos, I., Eliopoulos, A.G.,  Schneider, R., Jensen, L.J., Pafilis, E., Pavlopoulos, G.A. (2021) **OnTheFly<sup>2.0</sup>: a text-mining web application for automated biomedical entity recognition, document annotation, network and functional enrichment analysis**. *bioRxiv* 2021.05.14.444150. doi: [10.1101/2021.05.14.444150](https://doi.org/10.1101/2021.05.14.444150)
+**Publication:** Baltoumas, F.A., Zafeiropoulou, S., Karatzas, E., Paragkamian, S., Thanati, F., Iliopoulos, I., Eliopoulos, A.G.,  Schneider, R., Jensen, L.J., Pafilis, E., Pavlopoulos, G.A. (2021) **OnTheFly<sup>2.0</sup>: a text-mining web application for automated biomedical entity recognition, document annotation, network and functional enrichment analysis**. *bioRxiv* 2021.05.14.444150. doi: [10.1101/2021.05.14.444150](https://doi.org/10.1101/2021.05.14.444150)
 
 ----
 ## Requirements

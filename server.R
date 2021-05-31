@@ -971,7 +971,7 @@ server <- function (input, output, session) {
         }
         else
         {
-          go_conv <-gconvert(ids_init, organism = org, target=id_output_type, mthreshold = Inf, filter_na = TRUE)
+          go_conv <-gconvert(query=ids_init, organism = org, target=id_output_type, mthreshold = Inf, filter_na = TRUE)
           gost_query <- go_conv$target
         }
         
@@ -1321,13 +1321,16 @@ server <- function (input, output, session) {
                           p_value_cutoff = pvalue,
                           FDR_cutoff = fdr
         )
-        request <- POST("https://agotool.org/api_orig", body = post_args, encode = "json")
+
+        print(post_args)
+        
+                request <- POST("https://agotool.org/api_orig", body = post_args, encode = "json")
         
         response<-rawToChar(content(request,"raw"))
         response <- gsub("PFAM \\(Protein FAMilies\\)", "PFAM", response)
         response <- gsub("UniProt keywords", "UniProt", response)
         result_df <- read.csv(text = response, sep="\t", stringsAsFactors = FALSE)
-        
+        print(result_df)
         #render the parameters box
         db_names<-c()
         for (i in 1:length(srcs))
@@ -1858,16 +1861,67 @@ server <- function (input, output, session) {
         })
         
         ids_dnl_string <- paste(unlist(ids_init), sep = "%0d", collapse = "%0d")
-        download_tsv <- sprintf("https://string-db.org/api/tsv/network?identifiers=%s&species=%s&network_type=%s&required_score=%s", ids_dnl_string, species_interactive, type_interactive, score_interactive)
-        download_png <- sprintf("https://string-db.org/api/image/network?identifiers=%s&species=%s&network_type=%s&required_score=%s", ids_dnl_string, species_interactive, type_interactive, score_interactive)
         
         #A small API call to get the STRING URL:
         # 'get_link' returns a file (json, tsv or XML) containing the URL to the string website
         #we call it with a curl request and decode it
-        string_link_raw <- curl_fetch_memory(sprintf("https://string-db.org/api/tsv-no-header/get_link?identifiers=%s&species=%s&network_type=%s&required_score=%s", ids_dnl_string, species_interactive, type_interactive, score_interactive))
-        string_link <- trimws(rawToChar(string_link_raw$content))
-        #Now you have a STRING url
+        h_open <- new_handle(url="https://string-db.org/api/tsv-no-header/get_link")
+        handle_setform(h_open,
+                       identifiers=ids_dnl_string,
+                       species=sprintf("%s",species_interactive),
+                       network_type=type_interactive,
+                       network_flavor=edges_interactive,
+                       required_score=score_interactive,
+                       caller_identity = "OnTheFly@bib.fleming"
+        )
+        h_open_curl <- curl_fetch_memory("https://string-db.org/api/tsv-no-header/get_link", h_open)
+        string_link <- rawToChar(h_open_curl$content)
+        string_link <- trimws(string_link)
         
+        
+        
+        h_tsv <- new_handle(url="https://string-db.org/api/tsv/network")
+        handle_setform(h_tsv,
+                       identifiers=ids_dnl_string,
+                       species=sprintf("%s",species_interactive),
+                       network_type=type_interactive,
+                       network_flavor=edges_interactive,
+                       required_score=score_interactive,
+                       caller_identity = "OnTheFly@bib.fleming"
+        )
+        h_tsv_curl <- curl_fetch_memory("https://string-db.org/api/tsv/network", h_tsv)
+        string_tsv <- rawToChar(h_tsv_curl$content)
+        
+        
+        svg_to_png_js_code="var dv = document.getElementById('stringEmbedded');
+  var svg = dv.getElementsByTagName('svg')[0];
+  var svgData = new XMLSerializer().serializeToString( svg );
+  
+  var canvas = document.createElement( 'canvas' );
+  var ctx = canvas.getContext( '2d' );
+  
+  var img = document.createElement( 'img' );
+  img.setAttribute( 'src', 'data:image/svg+xml;base64,' + btoa( svgData ) );
+  
+  img.onload = function() {
+    var canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var context = canvas.getContext('2d');
+    context.drawImage(img, 0, 0);
+    
+    var a = document.createElement('a');
+    a.download = 'network.png';
+    a.href = canvas.toDataURL('image/png');
+    document.body.appendChild(a);
+    a.click();
+  }"
+        
+        #download_tsv <- sprintf("https://string-db.org/api/tsv/network?identifiers=%s&species=%s&network_type=%s&required_score=%s", ids_dnl_string, species_interactive, type_interactive, score_interactive)
+        #download_png <- sprintf("https://string-db.org/api/image/network?identifiers=%s&species=%s&network_type=%s&required_score=%s", ids_dnl_string, species_interactive, type_interactive, score_interactive)
+        
+
+
         if(type_interactive=="functional")
         {
           print_type="Full (functional & physical)"
@@ -1884,10 +1938,20 @@ server <- function (input, output, session) {
         output$tsv_string <- renderUI({
           fluidRow(
             actionButton(inputId = 'string_link', label = 'Open in STRING', icon = icon('link'), style='md-flat', onclick = sprintf("window.open('%s', '_blank')", string_link)),
-            actionButton(inputId = 'dnl_tsv_string', label = 'Download Network', icon = icon('download'),  style='md-flat', onclick = sprintf("window.open('%s', '_blank')", download_tsv)),
-            actionButton(inputId = 'dnl_png_string', label = 'Export Image', icon = icon('image'),  style='md-flat', onclick = sprintf("window.open('%s', '_blank')", download_png))
+            downloadButton(outputId = 'dnl_tsv_string', label = 'Download Network', icon = icon('download'),  style='md-flat'),
+            actionButton(inputId = 'dnl_png_string', label = 'Export Image', icon = icon('image'),  style='md-flat', onclick = svg_to_png_js_code)
           )
         })
+        
+        
+        #download file dialog for saving a tsv text
+        output$dnl_tsv_string <-downloadHandler(
+          filename = "network.tsv",
+          content = function(file) {
+            write(string_tsv, file)
+          }
+        )
+        
         
         output$string_legend <- create_network_legend("string", edges_interactive)
         
@@ -1974,12 +2038,14 @@ server <- function (input, output, session) {
         ids_svg_stitch <- paste(unlist(ids_init_stitch), sep = "%0d", collapse = "%0d")
         
 
-        #the SVG canvas is fetched through a curl POST request.  Standard jquery requests, like those used in the STRING API of STRING v11, DO NOT WORK (error in CORS policy)
+        #the SVG canvas is fetched through a curl request.  Standard jquery requests, like those used in the STRING API of STRING v11, DO NOT WORK (error in CORS policy)
         stitch_url <- sprintf("http://stitch.embl.de/api/svg/networkList?identifiers=%s&species=%s&network_type=%s&network_flavor=%s&required_score=%s", ids_svg_stitch, species_stitch, type_stitch, edges_stitch, score_stitch)
 
+        
         request <- POST(stitch_url)
 
         svg_html<-rawToChar(content(request,"raw"))
+        svg_html<-gsub("svg_network_image", "svg_network_image_stitch", svg_html) # this is because the svgs generated by STRING & STITCH are given with the same ID.  Differentiating this will help selecting things more accurately, where needed
         
         
         output$stitch_out <- renderUI ({
@@ -2009,19 +2075,65 @@ server <- function (input, output, session) {
         })
         
         ids_svg_stitch <- paste(unlist(ids_init_stitch), sep = "%0d", collapse = "%0d")
-        download_tsv <- sprintf("https://string-db.org/api/tsv/network?identifiers=%s&species=%s&network_type=%s&required_score=%s", ids_svg_stitch, species_stitch, type_stitch, score_stitch)
-        download_png <- sprintf("http://stitch.embl.de/api/image/networkList?identifiers=%s&species=%s&network_type=%s&network_flavor=%s&required_score=%s", ids_svg_stitch, species_stitch, type_stitch, edges_stitch, score_stitch)
+        
+        h_tsv <- new_handle(url="https://string-db.org/api/tsv/network")
+        handle_setform(h_tsv,
+                       identifiers=ids_svg_stitch,
+                       species=sprintf("%s",species_stitch),
+                       network_type=type_stitch,
+                       network_flavor=edges_stitch,
+                       required_score=score_stitch,
+                       caller_identity = "OnTheFly@bib.fleming"
+        )
+        h_tsv_curl <- curl_fetch_memory("https://string-db.org/api/tsv/network", h_tsv)
+        stitch_tsv <- rawToChar(h_tsv_curl$content)
+        
+        
+        #download_tsv <- sprintf("https://string-db.org/api/tsv/network?identifiers=%s&species=%s&network_type=%s&required_score=%s", ids_svg_stitch, species_stitch, type_stitch, score_stitch)
         stitch_link <-  sprintf("http://stitch.embl.de/api/image/network?identifiers=%s&species=%s&network_type=%s&network_flavor=%s&required_score=%s", ids_svg_stitch, species_stitch, type_stitch, edges_stitch, score_stitch)
         
+        
+        svg_to_png_js_code="var dv = document.getElementById('stitchEmbedded');
+  var svg = dv.getElementsByTagName('svg')[0];
+  var svgData = new XMLSerializer().serializeToString( svg );
+  
+  var canvas = document.createElement( 'canvas' );
+  var ctx = canvas.getContext( '2d' );
+  
+  var img = document.createElement( 'img' );
+  img.setAttribute( 'src', 'data:image/svg+xml;base64,' + btoa( svgData ) );
+  
+  img.onload = function() {
+    var canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var context = canvas.getContext('2d');
+    context.drawImage(img, 0, 0);
+    
+    var a = document.createElement('a');
+    a.download = 'network.png';
+    a.href = canvas.toDataURL('image/png');
+    document.body.appendChild(a);
+    a.click();
+  }"
         
         
         output$tsv_stitch <- renderUI({
           fluidRow(
             actionButton(inputId = 'stitch_link', label = 'Open in STITCH', icon = icon('link'), onclick = sprintf("window.open('%s', '_blank')", stitch_link)),
-            actionButton(inputId = 'dnl_tsv_stitch', label = 'Download Network', icon = icon('download'), onclick = sprintf("window.open('%s', '_blank')", download_tsv)),
-            actionButton(inputId = 'dnl_png_stitch', label = 'Export Image', icon = icon('image'), onclick = sprintf("window.open('%s', '_blank')", download_png))
+            downloadButton(outputId = 'dnl_tsv_stitch', label = 'Download Network', icon = icon('download')),
+            actionButton(inputId = 'dnl_png_stitch', label = 'Export Image', icon = icon('image'), onclick =svg_to_png_js_code)
           )
         })
+        
+        
+        #download file dialog for saving a tsv text
+        output$dnl_tsv_stitch <-downloadHandler(
+          filename = "network.tsv",
+          content = function(file) {
+            write(stitch_tsv, file)
+          }
+        )
         
         
         output$stitch_legend <- create_network_legend("stitch", edges_stitch)
