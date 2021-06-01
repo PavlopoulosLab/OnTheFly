@@ -1,4 +1,3 @@
 2021-05-31:
 -Re-wrote the API requests used in the STRING and STITCH networks
 -Corrected the name of one of the authors in README.md, ui.R and about.R
--re-enabled the use of gProfiler with Ensembl 102, until version 104 is released (Ensembl 103 is missing GO data for mouse, rat, and a number of other organisms)
