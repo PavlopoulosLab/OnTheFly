@@ -174,26 +174,6 @@ server <- function (input, output, session) {
                                     column(2, offset=10,
                                            actionLink(sprintf("org_list%s", id), "View available organisms", style="font-size:12px;text-align:right")
                                     )
-                                    # ,
-                                    # column(6, style = "float: right;",
-                                    #        pickerInput(
-                                    #          inputId = sprintf('zorgpicker%s', id),
-                                    #          label = '(Optional) Select organism(s) for protein annotation:',
-                                    #          choices = organismchoice,
-                                    #          multiple = T,
-                                    #          selected = organismchoice[[1]],
-                                    #          width = '98%',
-                                    #          options = list(
-                                    #            `actions-box` = T,
-                                    #            `deselect-all-text` = 'Deselect all',
-                                    #            `select-all-text` = 'Select all',
-                                    #            `none-selected-text` = 'No organism selected',
-                                    #            `selected-text-format` = paste0('count > ', length(organismchoice)-1),
-                                    #            `count-selected-text` = 'ALL'
-                                    #          )
-                                    #        ),
-                                    #        textInput(inputId = sprintf('moreorg%s', id), label = '(Optional) Write a Taxon Identifier:', placeholder = org_plcholder, width = '96%')
-                                    # ),
                                   ),
                                   fluidRow(
                                     actionBttn(inputId = sprintf('annotationbtn%s', id), label = ' Annotate ', style = 'material-flat', color="success", size = 'sm', icon = icon('highlighter')),
@@ -367,18 +347,6 @@ server <- function (input, output, session) {
           shinyjs::show(sprintf('info%s', id))
           dbs=input[[sprintf('typepicker%s', id)]]
           
-          #code for the old organism input
-          # if(!is.null(input[[sprintf('orgpicker%s', id)]])){
-          #   org=input[[sprintf('orgpicker%s', id)]]
-          # }
-          # else if(!is.null(input[[sprintf('moreorg%s', id)]])){
-          #   org=input[[sprintf('moreorg%s', id)]]
-          # }
-          # else
-          # {
-          #   org=input[[sprintf('orgpicker%s', id)]]
-          # }
-          
           #code for the new organism input
           inp_org=input[[sprintf("orgpicker%s", id)]]
           if(inp_org!="")
@@ -389,13 +357,6 @@ server <- function (input, output, session) {
           {
             org=""
           }
-          # org<-c()
-          # if(!is.null(inp_org))
-          # {
-          #   for (i in 1:length(inp_org))
-          #     org[i]<- organisms[organisms$print_name==inp_org[i],]$Taxonomy_ID
-          #   
-          # }
           var <- array(c(org, dbs))
           js$table(var)
           js$annotate(var)
@@ -426,7 +387,6 @@ server <- function (input, output, session) {
           shinyjs::show(sprintf('infonew%s', id))
           shinyjs::show(sprintf('infonewtab%s', id))
           shinyjs::hide(sprintf('info%s', id))
-          #updateTabsetPanel(session, sprintf('tabset%s', id), selected = 'Entities')
         }
       })
     })
@@ -441,8 +401,7 @@ server <- function (input, output, session) {
       observeEvent(input[[sprintf('annotreset%s', id)]], {
         updatePickerInput(session, sprintf('typepicker%s', id), selected= filterchoices )
         updatePickerInput(session, sprintf('orgpicker%s', id), selected= "Homo sapiens (Human) [NCBI Tax. ID: 9606]" )
-        #updateTextInput(session,  sprintf('moreorg%s', id), value = '')
-        
+
         index <- which(file_ids==id)
         fpath <- file_paths[[index]]
         
@@ -456,19 +415,6 @@ server <- function (input, output, session) {
     })
   })
   
-  
-  
-  
-  #  observe({
-  #    lapply(input$select, function(id) {
-  #      observeEvent(input[[sprintf('moreorg%s', id)]], {
-  #        if (input[[sprintf('moreorg%s', id)]] != '') {
-  #          var <- array(input[[sprintf('moreorg%s', id)]])
-  #          js$table(var)
-  #        }
-  #      })
-  #    })
-  #  })
   
   
   #----Rendering of entities datatables----####
@@ -736,9 +682,6 @@ server <- function (input, output, session) {
     }, server=F)
   })
   
-  #obsolte and buggy - disable until further notice
-  # 
-  # 
   #----Delete rows in FE gProfiler tab----####
   observeEvent(input$sel_analysis_rows_selected, {
     req(input$sel_analysis_rows_selected)
@@ -930,9 +873,14 @@ server <- function (input, output, session) {
   
   #----FE with gProfiler----####  
   observeEvent(input$analyze, {
+    showModal(modalDialog(span('Analysis in Progress, please wait...', style='color:lightseagreen'), footer = NULL, style = 'font-size:20px; text-align:center;position:absolute;top:50%;left:50%'))
+    
+    #a quick POST request to see if the gProfiler service is available
+    gprof_check <- POST(get_base_url())
+    if(gprof_check$status_code ==200)
+    {
     if(input$organisms !="")
     {
-      showModal(modalDialog(span('Analysis in Progress, please wait...', style='color:lightseagreen'), footer = NULL, style = 'font-size:20px; text-align:center;position:absolute;top:50%;left:50%'))
       updateTabsetPanel(session,'all_identifiers_FE', 'Results')
       req(input$organisms)
       req(input$sources)
@@ -957,7 +905,6 @@ server <- function (input, output, session) {
           ids_init <- append(ids_init, identifiers[i])
         }
       }
-      
       #getting all sources in a vector
       dbs <- c()
       for (i in srcs) {
@@ -1170,11 +1117,7 @@ server <- function (input, output, session) {
                            }
                          })
           })
-          
-          
-          
-          
-          
+  
           removeModal()
         }
         else {
@@ -1191,6 +1134,7 @@ server <- function (input, output, session) {
             animation = T
           )
         }
+        
       }
       else {
         shinyalert(
@@ -1219,6 +1163,22 @@ server <- function (input, output, session) {
         confirmButtonCol = 'rgb(31, 191, 164)',
         animation = T
       ) 
+    }
+    }
+    else
+    {
+      removeModal()
+      shinyalert(
+        title = 'Connection to g:Profiler could not be established',
+        text = 'It seems the g:Profiler web service is not responding. Please try again later...',
+        size = 's', 
+        closeOnEsc = T,
+        type = 'error',
+        showConfirmButton = T,
+        confirmButtonText = "OK",
+        confirmButtonCol = 'rgb(31, 191, 164)',
+        animation = T
+      )
     }
   })
   
@@ -1321,155 +1281,15 @@ server <- function (input, output, session) {
                           p_value_cutoff = pvalue,
                           FDR_cutoff = fdr
         )
-
-        print(post_args)
         
-                request <- POST("https://agotool.org/api_orig", body = post_args, encode = "json")
+        request <- POST("https://agotool.org/api_orig", body = post_args, encode = "json")
         
-        response<-rawToChar(content(request,"raw"))
-        response <- gsub("PFAM \\(Protein FAMilies\\)", "PFAM", response)
-        response <- gsub("UniProt keywords", "UniProt", response)
-        result_df <- read.csv(text = response, sep="\t", stringsAsFactors = FALSE)
-        print(result_df)
-        #render the parameters box
-        db_names<-c()
-        for (i in 1:length(srcs))
-        {
-          if (srcs[i]==-55) {db_names[i]<-"PFAM"}
-          else if (srcs[i]==-54) {db_names[i]<-"INTERPRO"}
-          else if (srcs[i]== -51) {db_names[i]<-"UniProt"}
-          else {db_names[i] <- "Disease Ontology"}
-        }
-        output$Pfam_parameters <- renderUI({
-          p(strong("Organism: "), org, " | ", strong("Sources: "), paste(db_names, collapse=", "), " | ", strong("P-value cut-off:"), pvalue, " | ", strong("FDR cut-off: "), fdr)
-        })
-        if(!is.null(result_df) & nrow(result_df)>0)
-        {
-          #ccolumns in the original result_df:
-          #[1] "term"                "hierarchical_level"  "description"         "year"                "over_under"          "p_value"             "FDR"                 "effect_size"
-          #[9] "ratio_in_foreground" "ratio_in_background" "foreground_count"    "foreground_n"        "background_count"    "background_n"        "foreground_ids"      "s_value"
-          #[17] "rank"                "funcEnum"            "category"            "etype"
-          results_table <- result_df[,c(19, 1, 3, 6, 7, 13,12,11,15)]
-          
-          names(results_table)[1] <- "Source"
-          names(results_table)[2] <- "ID"
-          names(results_table)[3] <- "Title"
-          names(results_table)[4] <- "P-value"
-          names(results_table)[5] <- "FDR"
-          names(results_table)[6] <- "Term Size"
-          names(results_table)[7] <- "Query size"
-          names(results_table)[8] <- "No. of Positive Hits"
-          names(results_table)[9] <- "Positive Hits"
-          
-          
-          
-          log_pval=c()
-          log_fdr=c()
-          enr_score=c()
-          for (i in 1:nrow(results_table))
-          {
-            log_pval[i] <- format((-log10(as.numeric(as.character(format(results_table[["P-value"]][i], scientific = F))))),format="e", digit=2)
-            log_fdr[i] <- format((-log10(as.numeric(as.character(format(results_table[["FDR"]][i], scientific = F))))),format="e", digit=2)
-            enr_score[i]  <- round(( results_table[["No. of Positive Hits"]][i]/results_table[["Term Size"]][i]) * 100, 2)
-            
-            result_genes<-c()
-            ids<- strsplit(gsub(sprintf("%s.",org),"", results_table[["Positive Hits"]][i]), ";")
-            for (j in 1:length(ids[[1]]))
-            {
-              r<-ensgenes[grepl(ids[[1]][j], ensgenes$input),]
-              result_genes[j]<-r$target
-            }
-            results_table[["Positive Hits"]][i]<- paste(result_genes, sep=";", collapse = ";")
-            
-            
-          }
-          results_table$log_pval=as.numeric(log_pval)
-          results_table$log_fdr=as.numeric(log_fdr)
-          results_table$enr_score=as.numeric(enr_score)
-          names(results_table)[10] <- '-log10(P-value)'
-          names(results_table)[11] <- '-log10(FDR)'
-          names(results_table)[12] <- 'Enrichment Score'
-          
-          results_table[["Positive Hits"]] <- gsub(";", ", ", results_table[["Positive Hits"]]) #add space after commas, to help wrap text easier
-          results_table[["FDR"]] <- format(as.numeric(unlist(results_table["FDR"])), scientific = T, digits = 3)
-          results_table[["P-value"]] <- format(as.numeric(unlist(results_table["P-value"])), scientific = T, digits = 3)
-          
-          #add the hyperlinks
-          for (i in 1:nrow(results_table))
-          {
-            if (results_table[["Source"]][i]=="UniProt")
-            {
-              url=sprintf("https://www.uniprot.org/keywords/%s", results_table[["ID"]][i])
-            }
-            else if(results_table[["Source"]][i]=="PFAM")
-            {
-              url=sprintf("http://pfam.xfam.org/family/%s", results_table[["ID"]][i])
-            }
-            else if(results_table[["Source"]][i]=="INTERPRO")
-            {
-              url=sprintf("https://www.ebi.ac.uk/interpro/entry/InterPro/%s/", results_table[["ID"]][i])
-            }
-            else
-            {
-              url=sprintf("https://diseases.jensenlab.org/Entity?order=textmining,knowledge,experiments&textmining=10&knowledge=10&experiments=10&type1=-26&type2=%s&id1=%s", org, results_table[["ID"]][i])
-            }
-            results_table[["ID"]][i] <- sprintf("<a href='%s' target='_blank'>%s</a>", url, results_table[["ID"]][i])
-            
-          }
-          
-          
-          #FE aGO tool: tables output-####
-          output[["Pfam_table_All"]] <- create_literature_table(results_table)
-          if (-55 %in% srcs) { output[["Pfam_table_pfam"]] <- create_literature_table(results_table[grepl("PFAM", results_table$Source), ])      } 
-          if (-54 %in% srcs) { output[["Pfam_table_interpro"]] <- create_literature_table(results_table[grepl("INTERPRO", results_table$Source), ])      }
-          if (-51 %in% srcs) { output[["Pfam_table_uniprot"]] <- create_literature_table(results_table[grepl("UniProt", results_table$Source), ])      }
-          if (-26 %in% srcs) { output[["Pfam_table_disease"]] <- create_literature_table(results_table[grepl("Disease Ontology", results_table$Source), ]) }
-          
-          output$Pfam_results_table <- renderUI({
-            withProgress(message = 'Rendering Results Table',
-                         detail = 'Please wait...', value = 0, {
-                           for (i in 1:10) {
-                             incProgress(1/10)
-                             Sys.sleep(0.25)
-                           }
-                         })
-            tabBox(
-              tabPanel(id="Pfam_all", "All", DT::dataTableOutput('Pfam_table_All')),
-              tabPanel(id="Pfam_pfam", "PFAM", DT::dataTableOutput('Pfam_table_pfam')),
-              tabPanel(id="Pfam_interpro", "INTERPRO", DT::dataTableOutput('Pfam_table_interpro')),
-              tabPanel(id="Pfam_uniprot", "UniProt", DT::dataTableOutput('Pfam_table_uniprot')),
-              tabPanel(id="Pfam_disease", "Disease Ontology", DT::dataTableOutput('Pfam_table_disease'))
-            )
-            
-          })
-          #-FE aGOtool: update barplot page-####
-          #rendering and updating menu options:
-          shinyjs::show("barplot_controls_Pfam")
-          #updating options in barplot select source
-          updatePickerInput(session, "barSelect_Pfam", choices=db_names, selected=db_names[1])
-          
-          #assigning the gost_output_table in the global variable for the bar plot
-          barplot_table_Pfam <<- data.frame()
-          barplot_table_Pfam <<-results_table
-          #rendering the barplot output layout loading slider (hack)
-          output$barplot_loading_Pfam <- renderUI({
-            withProgress(message = 'Rendering Bar Plot',
-                         detail = 'Please wait...', value = 0, {
-                           for (i in 1:10) {
-                             incProgress(1/10)
-                             Sys.sleep(0.25)
-                           }
-                         })
-          })
-          
-          removeModal()
-        }
-        else
+        if(request$status_code != 200)
         {
           removeModal()
           shinyalert(
-            title = 'No results found',
-            text = 'Check the selected organism, or select other Identifiers from the Selection tab',
+            title = 'Connection to aGO could not be established',
+            text = 'It seems the aGOtool web server is not responding. Please try again later...',
             size = 's', 
             closeOnEsc = T,
             type = 'error',
@@ -1478,6 +1298,162 @@ server <- function (input, output, session) {
             confirmButtonCol = 'rgb(31, 191, 164)',
             animation = T
           )
+        }
+        else
+        {
+          response<-rawToChar(content(request,"raw"))
+          response <- gsub("PFAM \\(Protein FAMilies\\)", "PFAM", response)
+          response <- gsub("UniProt keywords", "UniProt", response)
+          result_df <- read.csv(text = response, sep="\t", stringsAsFactors = FALSE)
+          print(result_df)
+          #render the parameters box
+          db_names<-c()
+          for (i in 1:length(srcs))
+          {
+            if (srcs[i]==-55) {db_names[i]<-"PFAM"}
+            else if (srcs[i]==-54) {db_names[i]<-"INTERPRO"}
+            else if (srcs[i]== -51) {db_names[i]<-"UniProt"}
+            else {db_names[i] <- "Disease Ontology"}
+          }
+          output$Pfam_parameters <- renderUI({
+            p(strong("Organism: "), org, " | ", strong("Sources: "), paste(db_names, collapse=", "), " | ", strong("P-value cut-off:"), pvalue, " | ", strong("FDR cut-off: "), fdr)
+          })
+          if(!is.null(result_df) & nrow(result_df)>0)
+          {
+            #ccolumns in the original result_df:
+            #[1] "term"                "hierarchical_level"  "description"         "year"                "over_under"          "p_value"             "FDR"                 "effect_size"
+            #[9] "ratio_in_foreground" "ratio_in_background" "foreground_count"    "foreground_n"        "background_count"    "background_n"        "foreground_ids"      "s_value"
+            #[17] "rank"                "funcEnum"            "category"            "etype"
+            results_table <- result_df[,c(19, 1, 3, 6, 7, 13,12,11,15)]
+            
+            names(results_table)[1] <- "Source"
+            names(results_table)[2] <- "ID"
+            names(results_table)[3] <- "Title"
+            names(results_table)[4] <- "P-value"
+            names(results_table)[5] <- "FDR"
+            names(results_table)[6] <- "Term Size"
+            names(results_table)[7] <- "Query size"
+            names(results_table)[8] <- "No. of Positive Hits"
+            names(results_table)[9] <- "Positive Hits"
+            
+            
+            
+            log_pval=c()
+            log_fdr=c()
+            enr_score=c()
+            for (i in 1:nrow(results_table))
+            {
+              log_pval[i] <- format((-log10(as.numeric(as.character(format(results_table[["P-value"]][i], scientific = F))))),format="e", digit=2)
+              log_fdr[i] <- format((-log10(as.numeric(as.character(format(results_table[["FDR"]][i], scientific = F))))),format="e", digit=2)
+              enr_score[i]  <- round(( results_table[["No. of Positive Hits"]][i]/results_table[["Term Size"]][i]) * 100, 2)
+              
+              result_genes<-c()
+              ids<- strsplit(gsub(sprintf("%s.",org),"", results_table[["Positive Hits"]][i]), ";")
+              for (j in 1:length(ids[[1]]))
+              {
+                r<-ensgenes[grepl(ids[[1]][j], ensgenes$input),]
+                result_genes[j]<-r$target
+              }
+              results_table[["Positive Hits"]][i]<- paste(result_genes, sep=";", collapse = ";")
+              
+              
+            }
+            results_table$log_pval=as.numeric(log_pval)
+            results_table$log_fdr=as.numeric(log_fdr)
+            results_table$enr_score=as.numeric(enr_score)
+            names(results_table)[10] <- '-log10(P-value)'
+            names(results_table)[11] <- '-log10(FDR)'
+            names(results_table)[12] <- 'Enrichment Score'
+            
+            results_table[["Positive Hits"]] <- gsub(";", ", ", results_table[["Positive Hits"]]) #add space after commas, to help wrap text easier
+            results_table[["FDR"]] <- format(as.numeric(unlist(results_table["FDR"])), scientific = T, digits = 3)
+            results_table[["P-value"]] <- format(as.numeric(unlist(results_table["P-value"])), scientific = T, digits = 3)
+            
+            #add the hyperlinks
+            for (i in 1:nrow(results_table))
+            {
+              if (results_table[["Source"]][i]=="UniProt")
+              {
+                url=sprintf("https://www.uniprot.org/keywords/%s", results_table[["ID"]][i])
+              }
+              else if(results_table[["Source"]][i]=="PFAM")
+              {
+                url=sprintf("http://pfam.xfam.org/family/%s", results_table[["ID"]][i])
+              }
+              else if(results_table[["Source"]][i]=="INTERPRO")
+              {
+                url=sprintf("https://www.ebi.ac.uk/interpro/entry/InterPro/%s/", results_table[["ID"]][i])
+              }
+              else
+              {
+                url=sprintf("https://diseases.jensenlab.org/Entity?order=textmining,knowledge,experiments&textmining=10&knowledge=10&experiments=10&type1=-26&type2=%s&id1=%s", org, results_table[["ID"]][i])
+              }
+              results_table[["ID"]][i] <- sprintf("<a href='%s' target='_blank'>%s</a>", url, results_table[["ID"]][i])
+              
+            }
+            
+            
+            #FE aGO tool: tables output-####
+            output[["Pfam_table_All"]] <- create_literature_table(results_table)
+            if (-55 %in% srcs) { output[["Pfam_table_pfam"]] <- create_literature_table(results_table[grepl("PFAM", results_table$Source), ])      } 
+            if (-54 %in% srcs) { output[["Pfam_table_interpro"]] <- create_literature_table(results_table[grepl("INTERPRO", results_table$Source), ])      }
+            if (-51 %in% srcs) { output[["Pfam_table_uniprot"]] <- create_literature_table(results_table[grepl("UniProt", results_table$Source), ])      }
+            if (-26 %in% srcs) { output[["Pfam_table_disease"]] <- create_literature_table(results_table[grepl("Disease Ontology", results_table$Source), ]) }
+            
+            output$Pfam_results_table <- renderUI({
+              withProgress(message = 'Rendering Results Table',
+                           detail = 'Please wait...', value = 0, {
+                             for (i in 1:10) {
+                               incProgress(1/10)
+                               Sys.sleep(0.25)
+                             }
+                           })
+              tabBox(
+                tabPanel(id="Pfam_all", "All", DT::dataTableOutput('Pfam_table_All')),
+                tabPanel(id="Pfam_pfam", "PFAM", DT::dataTableOutput('Pfam_table_pfam')),
+                tabPanel(id="Pfam_interpro", "INTERPRO", DT::dataTableOutput('Pfam_table_interpro')),
+                tabPanel(id="Pfam_uniprot", "UniProt", DT::dataTableOutput('Pfam_table_uniprot')),
+                tabPanel(id="Pfam_disease", "Disease Ontology", DT::dataTableOutput('Pfam_table_disease'))
+              )
+              
+            })
+            #-FE aGOtool: update barplot page-####
+            #rendering and updating menu options:
+            shinyjs::show("barplot_controls_Pfam")
+            #updating options in barplot select source
+            updatePickerInput(session, "barSelect_Pfam", choices=db_names, selected=db_names[1])
+            
+            #assigning the gost_output_table in the global variable for the bar plot
+            barplot_table_Pfam <<- data.frame()
+            barplot_table_Pfam <<-results_table
+            #rendering the barplot output layout loading slider (hack)
+            output$barplot_loading_Pfam <- renderUI({
+              withProgress(message = 'Rendering Bar Plot',
+                           detail = 'Please wait...', value = 0, {
+                             for (i in 1:10) {
+                               incProgress(1/10)
+                               Sys.sleep(0.25)
+                             }
+                           })
+            })
+            
+            removeModal()
+          }
+          else
+          {
+            removeModal()
+            shinyalert(
+              title = 'No results found',
+              text = 'Check the selected organism, or select other Identifiers from the Selection tab',
+              size = 's', 
+              closeOnEsc = T,
+              type = 'error',
+              showConfirmButton = T,
+              confirmButtonText = "OK",
+              confirmButtonCol = 'rgb(31, 191, 164)',
+              animation = T
+            )
+          }
         }
       }
       else
@@ -1583,7 +1559,6 @@ server <- function (input, output, session) {
         #foreground ids (the ones that will be submitted)
         foreground <- paste(unlist(input_identifiers), sep = "%0d", collapse = "%0d")
         #the databases that will be searched are set as comma separate desired entity_types (e.g. PMIDs, UniProt Keywords, Pfam and Interpro)
-        #limit_2_entity_type <- paste(unlist(srcs), sep = ";", collapse = ";")
         #representation level : over-, underrepresented or both
         o_or_u_or_both<-"both"
         #the api POST request
@@ -1598,137 +1573,13 @@ server <- function (input, output, session) {
         )
         request <- POST("https://agotool.org/api_orig", body = post_args, encode = "json")
         
-        response<-rawToChar(content(request,"raw"))
-        response<-gsub("PMID \\(PubMed IDentifier\\)", "PubMed", response)
-        result_df <- read.csv(text = response, sep="\t", stringsAsFactors = FALSE)
         
-        #render the parameters box
-        # db_names<-c()
-        # for (i in 1:length(srcs))
-        # {
-        #   if (srcs[i]==-56) {db_names[i]<-"PubMed"}
-        #   else{db_names[i]<-"Disease Ontology"}
-        # }
-        
-        
-        output$PMID_parameters <- renderUI({
-          p(strong("Organism: "), org,  " | ", strong("P-value cut-off:"), pvalue, " | ", strong("FDR cut-off: "), fdr)
-        })
-        if(!is.null(result_df) & nrow(result_df)>0)
-        {
-          #ccolumns in the original result_df:
-          #[1] "term"                "hierarchical_level"  "description"         "year"                "over_under"          "p_value"             "FDR"                 "effect_size"
-          #[9] "ratio_in_foreground" "ratio_in_background" "foreground_count"    "foreground_n"        "background_count"    "background_n"        "foreground_ids"      "s_value"
-          #[17] "rank"                "funcEnum"            "category"            "etype"
-          results_table <- result_df[,c(19, 1, 3, 6, 7, 13,12,11,15)]
-          
-          names(results_table)[1] <- "Source"
-          names(results_table)[2] <- "ID"
-          names(results_table)[3] <- "Title"
-          names(results_table)[4] <- "P-value"
-          names(results_table)[5] <- "FDR"
-          names(results_table)[6] <- "Term Size"
-          names(results_table)[7] <- "Query size"
-          names(results_table)[8] <- "No. of Positive Hits"
-          names(results_table)[9] <- "Positive Hits"
-          
-          
-          
-          log_pval=c()
-          log_fdr=c()
-          enr_score=c()
-          for (i in 1:nrow(results_table))
-          {
-            log_pval[i] <- format((-log10(as.numeric(as.character(format(results_table[["P-value"]][i], scientific = F))))),format="e", digit=2)
-            log_fdr[i] <- format((-log10(as.numeric(as.character(format(results_table[["FDR"]][i], scientific = F))))),format="e", digit=2)
-            enr_score[i]  <- round(( results_table[["No. of Positive Hits"]][i]/results_table[["Term Size"]][i]) * 100, 2)
-            
-            result_genes<-c()
-            ids<- strsplit(gsub(sprintf("%s.",org),"", results_table[["Positive Hits"]][i]), ";")
-            for (j in 1:length(ids[[1]]))
-            {
-              r<-ensgenes[grepl(ids[[1]][j], ensgenes$input),]
-              result_genes[j]<-r$target
-            }
-            results_table[["Positive Hits"]][i]<- paste(result_genes, sep=";", collapse = ";")
-            
-            
-          }
-          results_table$log_pval=as.numeric(log_pval)
-          results_table$log_fdr=as.numeric(log_fdr)
-          results_table$enr_score=as.numeric(enr_score)
-          names(results_table)[10] <- '-log10(P-value)'
-          names(results_table)[11] <- '-log10(FDR)'
-          names(results_table)[12] <- 'Enrichment Score'
-          
-          results_table[["Positive Hits"]] <- gsub(";", ", ", results_table[["Positive Hits"]]) #add space after commas, to help wrap text easier
-          results_table[["FDR"]] <- format(as.numeric(unlist(results_table["FDR"])), scientific = T, digits = 3)
-          results_table[["P-value"]] <- format(as.numeric(unlist(results_table["P-value"])), scientific = T, digits = 3)
-          
-          #add the hyperlinks
-          for (i in 1:nrow(results_table))
-          {
-            if(results_table[["Source"]][i]=="PubMed")
-            {
-              id_split<- strsplit(results_table[["ID"]][i], ":")
-              id_number<-id_split[[1]][[length(id_split[[1]])]]
-              url=sprintf("https://pubmed.ncbi.nlm.nih.gov/%s/", id_number)
-            }
-            else
-            {
-              url=sprintf("https://diseases.jensenlab.org/Entity?order=textmining,knowledge,experiments&textmining=10&knowledge=10&experiments=10&type1=-26&type2=%s&id1=%s", org, results_table[["ID"]][i])
-            }
-            results_table[["ID"]][i] <- sprintf("<a href='%s' target='_blank'>%s</a>", url, results_table[["ID"]][i])
-            
-          }
-          
-          
-          #Literature search: tables output-####
-          output[["PMID_table_All"]] <- create_literature_table(results_table)
-          # if (-56 %in% srcs) { output[["PMID_table_pubmed"]] <- create_literature_table(results_table[grepl("PubMed", results_table$Source), ])      } 
-          # if (-26 %in% srcs) { output[["PMID_table_disease"]] <- create_literature_table(results_table[grepl("Disease", results_table$Source), ])      }
-          # 
-          output$PMID_results_table <- renderUI({
-            withProgress(message = 'Rendering Results Table',
-                         detail = 'Please wait...', value = 0, {
-                           for (i in 1:10) {
-                             incProgress(1/10)
-                             Sys.sleep(0.25)
-                           }
-                         })
-            
-              DT::dataTableOutput('PMID_table_All')
-
-            
-          })
-          #-Literature search: updatebarplot page-####
-          #rendering and updating menu options:
-          shinyjs::show("barplot_controls_PMID")
-          #updating options in barplot select source
-          
-          
-          #assigning the gost_output_table in the global variable for the bar plot
-          barplot_table_PMID <<- data.frame()
-          barplot_table_PMID <<-results_table
-          #rendering the barplot output layout loading slider (hack)
-          output$barplot_loading_PMID <- renderUI({
-            withProgress(message = 'Rendering Bar Plot',
-                         detail = 'Please wait...', value = 0, {
-                           for (i in 1:10) {
-                             incProgress(1/10)
-                             Sys.sleep(0.25)
-                           }
-                         })
-          })
-          handleBarPlot_PMID("PubMed", input$sliderBarplot_PMID, input$barplotMode_PMID, T, output, session)
-          removeModal()
-        }
-        else
+        if(request$status_code != 200)
         {
           removeModal()
           shinyalert(
-            title = 'No results found',
-            text = 'Check the selected organism, or select other Identifiers from the Selection tab',
+            title = 'Connection to aGO could not be established',
+            text = 'It seems the aGOtool web server is not responding. Please try again later...',
             size = 's', 
             closeOnEsc = T,
             type = 'error',
@@ -1737,6 +1588,141 @@ server <- function (input, output, session) {
             confirmButtonCol = 'rgb(31, 191, 164)',
             animation = T
           )
+        }
+        else
+        {
+          response<-rawToChar(content(request,"raw"))
+          response<-gsub("PMID \\(PubMed IDentifier\\)", "PubMed", response)
+          result_df <- read.csv(text = response, sep="\t", stringsAsFactors = FALSE)
+          
+
+          
+          
+          output$PMID_parameters <- renderUI({
+            p(strong("Organism: "), org,  " | ", strong("P-value cut-off:"), pvalue, " | ", strong("FDR cut-off: "), fdr)
+          })
+          if(!is.null(result_df) & nrow(result_df)>0)
+          {
+            #ccolumns in the original result_df:
+            #[1] "term"                "hierarchical_level"  "description"         "year"                "over_under"          "p_value"             "FDR"                 "effect_size"
+            #[9] "ratio_in_foreground" "ratio_in_background" "foreground_count"    "foreground_n"        "background_count"    "background_n"        "foreground_ids"      "s_value"
+            #[17] "rank"                "funcEnum"            "category"            "etype"
+            results_table <- result_df[,c(19, 1, 3, 6, 7, 13,12,11,15)]
+            
+            names(results_table)[1] <- "Source"
+            names(results_table)[2] <- "ID"
+            names(results_table)[3] <- "Title"
+            names(results_table)[4] <- "P-value"
+            names(results_table)[5] <- "FDR"
+            names(results_table)[6] <- "Term Size"
+            names(results_table)[7] <- "Query size"
+            names(results_table)[8] <- "No. of Positive Hits"
+            names(results_table)[9] <- "Positive Hits"
+            
+            
+            
+            log_pval=c()
+            log_fdr=c()
+            enr_score=c()
+            for (i in 1:nrow(results_table))
+            {
+              log_pval[i] <- format((-log10(as.numeric(as.character(format(results_table[["P-value"]][i], scientific = F))))),format="e", digit=2)
+              log_fdr[i] <- format((-log10(as.numeric(as.character(format(results_table[["FDR"]][i], scientific = F))))),format="e", digit=2)
+              enr_score[i]  <- round(( results_table[["No. of Positive Hits"]][i]/results_table[["Term Size"]][i]) * 100, 2)
+              
+              result_genes<-c()
+              ids<- strsplit(gsub(sprintf("%s.",org),"", results_table[["Positive Hits"]][i]), ";")
+              for (j in 1:length(ids[[1]]))
+              {
+                r<-ensgenes[grepl(ids[[1]][j], ensgenes$input),]
+                result_genes[j]<-r$target
+              }
+              results_table[["Positive Hits"]][i]<- paste(result_genes, sep=";", collapse = ";")
+              
+              
+            }
+            results_table$log_pval=as.numeric(log_pval)
+            results_table$log_fdr=as.numeric(log_fdr)
+            results_table$enr_score=as.numeric(enr_score)
+            names(results_table)[10] <- '-log10(P-value)'
+            names(results_table)[11] <- '-log10(FDR)'
+            names(results_table)[12] <- 'Enrichment Score'
+            
+            results_table[["Positive Hits"]] <- gsub(";", ", ", results_table[["Positive Hits"]]) #add space after commas, to help wrap text easier
+            results_table[["FDR"]] <- format(as.numeric(unlist(results_table["FDR"])), scientific = T, digits = 3)
+            results_table[["P-value"]] <- format(as.numeric(unlist(results_table["P-value"])), scientific = T, digits = 3)
+            
+            #add the hyperlinks
+            for (i in 1:nrow(results_table))
+            {
+              if(results_table[["Source"]][i]=="PubMed")
+              {
+                id_split<- strsplit(results_table[["ID"]][i], ":")
+                id_number<-id_split[[1]][[length(id_split[[1]])]]
+                url=sprintf("https://pubmed.ncbi.nlm.nih.gov/%s/", id_number)
+              }
+              else
+              {
+                url=sprintf("https://diseases.jensenlab.org/Entity?order=textmining,knowledge,experiments&textmining=10&knowledge=10&experiments=10&type1=-26&type2=%s&id1=%s", org, results_table[["ID"]][i])
+              }
+              results_table[["ID"]][i] <- sprintf("<a href='%s' target='_blank'>%s</a>", url, results_table[["ID"]][i])
+              
+            }
+            
+            
+            #Literature search: tables output-####
+            output[["PMID_table_All"]] <- create_literature_table(results_table)
+
+            output$PMID_results_table <- renderUI({
+              withProgress(message = 'Rendering Results Table',
+                           detail = 'Please wait...', value = 0, {
+                             for (i in 1:10) {
+                               incProgress(1/10)
+                               Sys.sleep(0.25)
+                             }
+                           })
+              
+              DT::dataTableOutput('PMID_table_All')
+              
+              
+            })
+            #-Literature search: updatebarplot page-####
+            #rendering and updating menu options:
+            shinyjs::show("barplot_controls_PMID")
+            #updating options in barplot select source
+            
+            
+            #assigning the gost_output_table in the global variable for the bar plot
+            barplot_table_PMID <<- data.frame()
+            barplot_table_PMID <<-results_table
+            #rendering the barplot output layout loading slider (hack)
+            output$barplot_loading_PMID <- renderUI({
+              withProgress(message = 'Rendering Bar Plot',
+                           detail = 'Please wait...', value = 0, {
+                             for (i in 1:10) {
+                               incProgress(1/10)
+                               Sys.sleep(0.25)
+                             }
+                           })
+            })
+            handleBarPlot_PMID("PubMed", input$sliderBarplot_PMID, input$barplotMode_PMID, T, output, session)
+            removeModal()
+          }
+          else
+          {
+            removeModal()
+            shinyalert(
+              title = 'No results found',
+              text = 'Check the selected organism, or select other Identifiers from the Selection tab',
+              size = 's', 
+              closeOnEsc = T,
+              type = 'error',
+              showConfirmButton = T,
+              confirmButtonText = "OK",
+              confirmButtonCol = 'rgb(31, 191, 164)',
+              animation = T
+            )
+          }
         }
       }
       else
@@ -1771,11 +1757,7 @@ server <- function (input, output, session) {
   })
   
   #---Literature search Barplot rendering events--####
-  # observeEvent(input$barSelect_PMID,{
-  #   if(nrow(barplot_table_PMID)>0){
-  #     handleBarPlot_PMID(input$barSelect_PMID, input$sliderBarplot_PMID, input$barplotMode_PMID, T, output, session)
-  #   }
-  # })
+
   observeEvent(input$sliderBarplot_PMID,{
     if(nrow(barplot_table_PMID)>0){
       handleBarPlot_PMID("PubMed", input$sliderBarplot_PMID, input$barplotMode_PMID, F, output, session)
@@ -1786,12 +1768,7 @@ server <- function (input, output, session) {
       handleBarPlot_PMID("PubMed", input$sliderBarplot_PMID, input$barplotMode_PMID, F, output, session)
     }
   })
-  
-  
-  
-  
-  
-  
+
   
   #----Tab STRINGdb network----####
   observeEvent(input$network_string, {
@@ -1875,25 +1852,44 @@ server <- function (input, output, session) {
                        caller_identity = "OnTheFly@bib.fleming"
         )
         h_open_curl <- curl_fetch_memory("https://string-db.org/api/tsv-no-header/get_link", h_open)
-        string_link <- rawToChar(h_open_curl$content)
-        string_link <- trimws(string_link)
         
         
-        
-        h_tsv <- new_handle(url="https://string-db.org/api/tsv/network")
-        handle_setform(h_tsv,
-                       identifiers=ids_dnl_string,
-                       species=sprintf("%s",species_interactive),
-                       network_type=type_interactive,
-                       network_flavor=edges_interactive,
-                       required_score=score_interactive,
-                       caller_identity = "OnTheFly@bib.fleming"
-        )
-        h_tsv_curl <- curl_fetch_memory("https://string-db.org/api/tsv/network", h_tsv)
-        string_tsv <- rawToChar(h_tsv_curl$content)
-        
-        
-        svg_to_png_js_code="var dv = document.getElementById('stringEmbedded');
+        if(h_open_curl$status_code != 200)
+        {
+          removeModal()
+          shinyalert(
+            title = 'Connection to STRING could not be established',
+            text = 'It seems the STRING web server is not responding. Please try again later...',
+            size = 's', 
+            closeOnEsc = T,
+            type = 'error',
+            showConfirmButton = T,
+            confirmButtonText = "OK",
+            confirmButtonCol = 'rgb(31, 191, 164)',
+            animation = T
+          )
+        }
+        else
+        {
+          string_link <- rawToChar(h_open_curl$content)
+          string_link <- trimws(string_link)
+          
+          
+          
+          h_tsv <- new_handle(url="https://string-db.org/api/tsv/network")
+          handle_setform(h_tsv,
+                         identifiers=ids_dnl_string,
+                         species=sprintf("%s",species_interactive),
+                         network_type=type_interactive,
+                         network_flavor=edges_interactive,
+                         required_score=score_interactive,
+                         caller_identity = "OnTheFly@bib.fleming"
+          )
+          h_tsv_curl <- curl_fetch_memory("https://string-db.org/api/tsv/network", h_tsv)
+          string_tsv <- rawToChar(h_tsv_curl$content)
+          
+          
+          svg_to_png_js_code="var dv = document.getElementById('stringEmbedded');
   var svg = dv.getElementsByTagName('svg')[0];
   var svgData = new XMLSerializer().serializeToString( svg );
   
@@ -1916,47 +1912,46 @@ server <- function (input, output, session) {
     document.body.appendChild(a);
     a.click();
   }"
-        
-        #download_tsv <- sprintf("https://string-db.org/api/tsv/network?identifiers=%s&species=%s&network_type=%s&required_score=%s", ids_dnl_string, species_interactive, type_interactive, score_interactive)
-        #download_png <- sprintf("https://string-db.org/api/image/network?identifiers=%s&species=%s&network_type=%s&required_score=%s", ids_dnl_string, species_interactive, type_interactive, score_interactive)
-        
-
-
-        if(type_interactive=="functional")
-        {
-          print_type="Full (functional & physical)"
-        }
-        else
-        {
-          print_type="Physical"
           
-        }
-        output$string_parameters_table <- renderUI({
-          p(strong("Organism: "), species_interactive, " | ", strong("Network Type: "), print_type, " | ", strong("Meaning of network edges:"), edges_interactive, " | ", strong("Interaction score cut-off: "), as.numeric(score_interactive)/1000)
-        })
-        
-        output$tsv_string <- renderUI({
-          fluidRow(
-            actionButton(inputId = 'string_link', label = 'Open in STRING', icon = icon('link'), style='md-flat', onclick = sprintf("window.open('%s', '_blank')", string_link)),
-            downloadButton(outputId = 'dnl_tsv_string', label = 'Download Network', icon = icon('download'),  style='md-flat'),
-            actionButton(inputId = 'dnl_png_string', label = 'Export Image', icon = icon('image'),  style='md-flat', onclick = svg_to_png_js_code)
-          )
-        })
-        
-        
-        #download file dialog for saving a tsv text
-        output$dnl_tsv_string <-downloadHandler(
-          filename = "network.tsv",
-          content = function(file) {
-            write(string_tsv, file)
+          
+          
+          
+          if(type_interactive=="functional")
+          {
+            print_type="Full (functional & physical)"
           }
-        )
-        
-        
-        output$string_legend <- create_network_legend("string", edges_interactive)
-        
-        removeModal()
-        js$int_network()
+          else
+          {
+            print_type="Physical"
+            
+          }
+          output$string_parameters_table <- renderUI({
+            p(strong("Organism: "), species_interactive, " | ", strong("Network Type: "), print_type, " | ", strong("Meaning of network edges:"), edges_interactive, " | ", strong("Interaction score cut-off: "), as.numeric(score_interactive)/1000)
+          })
+          
+          output$tsv_string <- renderUI({
+            fluidRow(
+              actionButton(inputId = 'string_link', label = 'Open in STRING', icon = icon('link'), style='md-flat', onclick = sprintf("window.open('%s', '_blank')", string_link)),
+              downloadButton(outputId = 'dnl_tsv_string', label = 'Download Network', icon = icon('download'),  style='md-flat'),
+              actionButton(inputId = 'dnl_png_string', label = 'Export Image', icon = icon('image'),  style='md-flat', onclick = svg_to_png_js_code)
+            )
+          })
+          
+          
+          #download file dialog for saving a tsv text
+          output$dnl_tsv_string <-downloadHandler(
+            filename = "network.tsv",
+            content = function(file) {
+              write(string_tsv, file)
+            }
+          )
+          
+          
+          output$string_legend <- create_network_legend("string", edges_interactive)
+          
+          removeModal()
+          js$int_network()
+        }
       }
       else
       {
@@ -2037,63 +2032,78 @@ server <- function (input, output, session) {
         }
         ids_svg_stitch <- paste(unlist(ids_init_stitch), sep = "%0d", collapse = "%0d")
         
-
+        
         #the SVG canvas is fetched through a curl request.  Standard jquery requests, like those used in the STRING API of STRING v11, DO NOT WORK (error in CORS policy)
         stitch_url <- sprintf("http://stitch.embl.de/api/svg/networkList?identifiers=%s&species=%s&network_type=%s&network_flavor=%s&required_score=%s", ids_svg_stitch, species_stitch, type_stitch, edges_stitch, score_stitch)
-
+        
         
         request <- POST(stitch_url)
-
-        svg_html<-rawToChar(content(request,"raw"))
-        svg_html<-gsub("svg_network_image", "svg_network_image_stitch", svg_html) # this is because the svgs generated by STRING & STITCH are given with the same ID.  Differentiating this will help selecting things more accurately, where needed
-        
-        
-        output$stitch_out <- renderUI ({
-          withProgress(message = 'Preparing network for visualization',
-                       detail = 'Please wait...', value = 0, {
-                         for (i in 1:10) {
-                           incProgress(1/10)
-                           Sys.sleep(0.25)
-                         }
-                       })
-          
-          tags$div(class = 'string_db_network',
-                   tags$div(id = 'stitchEmbedded', HTML(svg_html))
-          )
-        })
-        if(type_stitch=="functional")
+        if(request$status_code != 200)
         {
-          print_type="Full (functional & physical)"
+          removeModal()
+          shinyalert(
+            title = 'Connection to STRING could not be established',
+            text = 'It seems the STRING web server is not responding. Please try again later...',
+            size = 's', 
+            closeOnEsc = T,
+            type = 'error',
+            showConfirmButton = T,
+            confirmButtonText = "OK",
+            confirmButtonCol = 'rgb(31, 191, 164)',
+            animation = T
+          )
         }
         else
         {
-          print_type="Physical"
+          svg_html<-rawToChar(content(request,"raw"))
+          svg_html<-gsub("svg_network_image", "svg_network_image_stitch", svg_html) # this is because the svgs generated by STRING & STITCH are given with the same ID.  Differentiating this will help selecting things more accurately, where needed
           
-        }
-        output$stitch_parameters_table <- renderUI({
-          p(strong("Organism: "), species_stitch, " | ", strong("Network Type: "), print_type, " | ", strong("Meaning of network edges:"), edges_stitch, " | ", strong("Interaction score cut-off: "), as.numeric(score_stitch)/1000)
-        })
-        
-        ids_svg_stitch <- paste(unlist(ids_init_stitch), sep = "%0d", collapse = "%0d")
-        
-        h_tsv <- new_handle(url="https://string-db.org/api/tsv/network")
-        handle_setform(h_tsv,
-                       identifiers=ids_svg_stitch,
-                       species=sprintf("%s",species_stitch),
-                       network_type=type_stitch,
-                       network_flavor=edges_stitch,
-                       required_score=score_stitch,
-                       caller_identity = "OnTheFly@bib.fleming"
-        )
-        h_tsv_curl <- curl_fetch_memory("https://string-db.org/api/tsv/network", h_tsv)
-        stitch_tsv <- rawToChar(h_tsv_curl$content)
-        
-        
-        #download_tsv <- sprintf("https://string-db.org/api/tsv/network?identifiers=%s&species=%s&network_type=%s&required_score=%s", ids_svg_stitch, species_stitch, type_stitch, score_stitch)
-        stitch_link <-  sprintf("http://stitch.embl.de/api/image/network?identifiers=%s&species=%s&network_type=%s&network_flavor=%s&required_score=%s", ids_svg_stitch, species_stitch, type_stitch, edges_stitch, score_stitch)
-        
-        
-        svg_to_png_js_code="var dv = document.getElementById('stitchEmbedded');
+          
+          output$stitch_out <- renderUI ({
+            withProgress(message = 'Preparing network for visualization',
+                         detail = 'Please wait...', value = 0, {
+                           for (i in 1:10) {
+                             incProgress(1/10)
+                             Sys.sleep(0.25)
+                           }
+                         })
+            
+            tags$div(class = 'string_db_network',
+                     tags$div(id = 'stitchEmbedded', HTML(svg_html))
+            )
+          })
+          if(type_stitch=="functional")
+          {
+            print_type="Full (functional & physical)"
+          }
+          else
+          {
+            print_type="Physical"
+            
+          }
+          output$stitch_parameters_table <- renderUI({
+            p(strong("Organism: "), species_stitch, " | ", strong("Network Type: "), print_type, " | ", strong("Meaning of network edges:"), edges_stitch, " | ", strong("Interaction score cut-off: "), as.numeric(score_stitch)/1000)
+          })
+          
+          ids_svg_stitch <- paste(unlist(ids_init_stitch), sep = "%0d", collapse = "%0d")
+          
+          h_tsv <- new_handle(url="https://string-db.org/api/tsv/network")
+          handle_setform(h_tsv,
+                         identifiers=ids_svg_stitch,
+                         species=sprintf("%s",species_stitch),
+                         network_type=type_stitch,
+                         network_flavor=edges_stitch,
+                         required_score=score_stitch,
+                         caller_identity = "OnTheFly@bib.fleming"
+          )
+          h_tsv_curl <- curl_fetch_memory("https://string-db.org/api/tsv/network", h_tsv)
+          stitch_tsv <- rawToChar(h_tsv_curl$content)
+          
+          
+          stitch_link <-  sprintf("http://stitch.embl.de/api/image/network?identifiers=%s&species=%s&network_type=%s&network_flavor=%s&required_score=%s", ids_svg_stitch, species_stitch, type_stitch, edges_stitch, score_stitch)
+          
+          
+          svg_to_png_js_code="var dv = document.getElementById('stitchEmbedded');
   var svg = dv.getElementsByTagName('svg')[0];
   var svgData = new XMLSerializer().serializeToString( svg );
   
@@ -2116,31 +2126,32 @@ server <- function (input, output, session) {
     document.body.appendChild(a);
     a.click();
   }"
-        
-        
-        output$tsv_stitch <- renderUI({
-          fluidRow(
-            actionButton(inputId = 'stitch_link', label = 'Open in STITCH', icon = icon('link'), onclick = sprintf("window.open('%s', '_blank')", stitch_link)),
-            downloadButton(outputId = 'dnl_tsv_stitch', label = 'Download Network', icon = icon('download')),
-            actionButton(inputId = 'dnl_png_stitch', label = 'Export Image', icon = icon('image'), onclick =svg_to_png_js_code)
+          
+          
+          output$tsv_stitch <- renderUI({
+            fluidRow(
+              actionButton(inputId = 'stitch_link', label = 'Open in STITCH', icon = icon('link'), onclick = sprintf("window.open('%s', '_blank')", stitch_link)),
+              downloadButton(outputId = 'dnl_tsv_stitch', label = 'Download Network', icon = icon('download')),
+              actionButton(inputId = 'dnl_png_stitch', label = 'Export Image', icon = icon('image'), onclick =svg_to_png_js_code)
+            )
+          })
+          
+          
+          #download file dialog for saving a tsv text
+          output$dnl_tsv_stitch <-downloadHandler(
+            filename = "network.tsv",
+            content = function(file) {
+              write(stitch_tsv, file)
+            }
           )
-        })
-        
-        
-        #download file dialog for saving a tsv text
-        output$dnl_tsv_stitch <-downloadHandler(
-          filename = "network.tsv",
-          content = function(file) {
-            write(stitch_tsv, file)
-          }
-        )
-        
-        
-        output$stitch_legend <- create_network_legend("stitch", edges_stitch)
-        
-        
-        js$int_network()
-        removeModal()
+          
+          
+          output$stitch_legend <- create_network_legend("stitch", edges_stitch)
+          
+          
+          js$int_network()
+          removeModal()
+        }
       }
       else
       {

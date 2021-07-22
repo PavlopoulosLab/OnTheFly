@@ -1,6 +1,3 @@
-
-
-
 # OnTheFly<sup>2.0</sup>
 
 A text-mining web application for automated named entity recognition, document annotation, network and functional enrichment analysis 
@@ -37,7 +34,7 @@ With OnTheFly<sup>2.0</sup>  one is able to:
 -   Perform functional enrichment analysis on a selected group of terms.
 -   Generate and visualize protein-protein and protein-chemical interaction networks.
 
-Online version: http://onthefly.pavlopouloslab.info, http://bib.fleming.gr:3838/OnTheFly/
+Online version: http://bib.fleming.gr:3838/OnTheFly/, http://onthefly.pavlopouloslab.info
 
 **Publication:** Baltoumas, F.A., Zafeiropoulou, S., Karatzas, E., Paragkamian, S., Thanati, F., Iliopoulos, I., Eliopoulos, A.G.,  Schneider, R., Jensen, L.J., Pafilis, E., Pavlopoulos, G.A. (2021) **OnTheFly<sup>2.0</sup>: a text-mining web application for automated biomedical entity recognition, document annotation, network and functional enrichment analysis**. *bioRxiv* 2021.05.14.444150. doi: [10.1101/2021.05.14.444150](https://doi.org/10.1101/2021.05.14.444150)
 
@@ -49,11 +46,11 @@ Online version: http://onthefly.pavlopouloslab.info, http://bib.fleming.gr:3838/
 - [R](https://www.r-project.org/) version >= 3.6.1
 - [R-studio](https://www.rstudio.com/)  | **Note:** If **not** installed, the **shiny-server** R package is required for deployment
 - [poppler](https://poppler.freedesktop.org/) (specifically, the poppler-utils and poppler-data packages)
-- [pdf2htmlEX](https://pdf2htmlex.github.io/pdf2htmlEX/)
 - [LibreOffice](https://www.libreoffice.org/get-help/install-howto/linux/) and the [unoconv](https://github.com/unoconv/unoconv) utility
 - [Tesseract](https://github.com/tesseract-ocr/tesseract) (OCR scanning), the associated english and math training data ([tessdata](https://github.com/tesseract-ocr/tessdata) or [tessdata_fast](https://github.com/tesseract-ocr/tessdata_fast)) and the [OCRMyPDF](https://ocrmypdf.readthedocs.io/en/latest/) wrapper
 - [ImageMagick](https://imagemagick.org/index.php) and [Ghostscript](https://www.ghostscript.com/)
 - [curl](https://curl.se/), [libcurl](https://curl.se/libcurl/) and [libcurl4-openssl-dev](https://pkgs.org/download/libcurl4-openssl-dev) (required for the installation of the curl library in R)
+- [pdf2htmlEX](https://pdf2htmlex.github.io/pdf2htmlEX/)
 
 **Note: 1** Almost all of the above can be installed through your Linux distribution's  package manager (apt, zypper etc).  **An installation bash script ("install_dependencies.sh") is offered to automate setup in Debian and Debian-based (Ubuntu, Mint, etc) distributions**.  In Windows, users need to either install [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and [set-up a Linux distribution](https://www.microsoft.com/en-us/search/shop/apps?q=Linux) or use a compatibility layer like [Cygwin](https://www.cygwin.com/).  However, Cygwin users will need to manually compile all the required packages by source.
 
@@ -67,7 +64,7 @@ Online version: http://onthefly.pavlopouloslab.info, http://bib.fleming.gr:3838/
 - ShinyThemes
 - ShinyDashboard
 - dashboardThemes
-- ShinyDashboardPlus **version 0.7.5** (**Note**: newer versions cause errors due to a bug that still hasn't been resolved in the package)
+- shinydashboardPlus **version 0.7.5** (**Note**: newer versions cause errors due to a bug that still hasn't been resolved in the package)
 - ShinyCSSLoaders
 - ShinyWidgets
 - ShinyAlert
@@ -170,7 +167,7 @@ or
 >     sudo ./install_dependencies.sh
 
 4.  Install [R](https://cloud.r-project.org/bin/windows/) (version 3.6.1 or newer) and [R-studio](https://www.rstudio.com/products/rstudio/download/#download) for Windows.
-5. Install all required libraries in R (or in R-studio), by loading an running the "install_libraries.R" script.
+5. Install all required libraries in R (or in R-studio), by loading and running the "install_libraries.R" script.
 6. Open the tool's project file (OnTheFly.rproj) in R-studio, select  **ui.R**, **server.R** or **global.R** and click "Run App".  The first time you do this, your antivirus or firewall may request that you grant access to a program called "wsl".  This is a component of the WSL environment that allows you to run Linux applications in native Windows (i.e. outside the WSL environment). 
 
 ----
@@ -198,7 +195,7 @@ As an alternative to R-studio, you can deploy OnTheFly<sup>2.0</sup> as a web se
 >	  sudo ln -s /opt/shiny-server/samples/OnTheFly/ /srv/shiny-server/OnTheFly/
 5. Change the owner of the OnTheFly directory to shiny
 >     sudo chown shiny -R /opt/shiny-server/samples/OnTheFly/
-6. Change the read/write/execute permissions for the temporary files directory, located in OnTheFly/www/tmp/:
+6. Change the read/write/execute permissions for the temporary files directory, located in `OnTheFly/www/tmp/`:
 >     sudo chmod 766 -R /opt/shiny-server/samples/OnTheFly/www/tmp/
 7. Restart shiny-server to apply all changes:
 >     sudo service shiny-server restart

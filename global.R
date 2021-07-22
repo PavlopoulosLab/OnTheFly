@@ -34,7 +34,7 @@ max_files = 10 #10 files max
 
 #stop editing from here on
 
-#global system paths, setting filesize computationally
+#global system paths, gprofiler url, setting filesize computationally
 Sys.setenv(LD_LIBRARY_PATH = "/usr/lib/libreoffice/program/:$LD_LIBRARY_PATH")
 
 options(shiny.maxRequestSize = max_file_size*1024^2) #maximum file size: 10 MB
@@ -169,11 +169,6 @@ FE_hyperlinks <- list("GO:BP" = "https://www.ebi.ac.uk/QuickGO/term/GO:",
                       "HP" = "https://hpo.jax.org/app/browse/term/HP:",
                       "WP" = "https://www.wikipathways.org/index.php/Pathway:"
 )
-
-
-# PMID_source_choices <- list("PubMed" = -56,
-#                             "Disease Ontology" = -26
-# )
 
 
 Pfam_source_choices <- list(

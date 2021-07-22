@@ -331,11 +331,6 @@ ui <- shinyUI(
                              fluidRow(
                                div(id = 'result_info_Pfam', p('Enrichment results will be shown in', strong('"Results"'), 'tab',  style = 'margin-left: 8px;'), style="background-color:#fcacac;font-size:18px;display:none"),
                                sidebarPanel(
-                                 # pickerInput(
-                                 #   inputId = 'organisms_Pfam',
-                                 #   label = '1. Select organism to perform literature search:',
-                                 #   choices = organismchoice
-                                 # ),
                                  selectizeInput(
                                    inputId = "organisms_Pfam",
                                    label = "1. Select organism:",
@@ -562,11 +557,6 @@ ui <- shinyUI(
                               fluidRow(
                                 div(id = 'result_info_STRING', p('Network results will be shown in', strong('"Network Viewer"'), 'tab',  style = 'margin-left: 8px;'), style="background-color:#fcacac;font-size:18px;display:none"),
                                 sidebarPanel(
-                                  # pickerInput(
-                                  #   inputId = 'organisms_network',
-                                  #   label = 'Select organism to extract network:',
-                                  #   choices = organismchoice
-                                  # ),
                                   selectizeInput(
                                     inputId = "organisms_network",
                                     label = "Select organism:",

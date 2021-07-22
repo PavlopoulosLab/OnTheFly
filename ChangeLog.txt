@@ -1,3 +1,10 @@
+2021-07-22:
+-Added status checks in all HTTP requests (g:Profiler, aGOtool, STRING and STITCH). Now, if a web service is unavailable or returns errors, an informative message appears and the tool no longer crashes.
+-Added code to set the default repository in "install_libraries.R". This way, the script can be run "as-is" through Rscript without having to manually set the CRAN mirror.
+-Cleaned up ui.R, server.R and global.R from obsolete (commented out) code.
+-Corrected a few typos in README.md
+
 2021-05-31:
 -Re-wrote the API requests used in the STRING and STITCH networks
 -Corrected the name of one of the authors in README.md, ui.R and about.R
+-re-enabled the use of gProfiler with Ensembl 102, until version 104 is released (Ensembl 103 is missing GO data for mouse, rat, and a number of other organisms)

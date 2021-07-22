@@ -1,3 +1,9 @@
+#step 0 set Default repository for automated download
+local({r <- getOption("repos")
+       r["CRAN"] <- "http://cran.r-project.org" 
+       options(repos=r)
+})
+
 #step1 check if devtools is available. If not, install it, and load it with required
 if("devtools" %in% rownames(installed.packages()))
 {
