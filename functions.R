@@ -50,7 +50,7 @@ on.upload_new <- function(upload, session){
         
         
       }
-      else if (tolower(ext) == 'txt') {
+      else if (tolower(ext) == 'txt' || tolower(ext) == 'xml') {
         system(sprintf('libreoffice --convert-to pdf --outdir www/tmp www/tmp/%s.%s', id, ext))
         
         #system(sprintf('unoconv -f pdf www/tmp/%s.txt', id))
@@ -892,7 +892,7 @@ drawBarplot_Pfam <- function(dframe, mode, DB_source, sliderBarplot, output){
 ## STRING and STITCH Styling functions -####
 
 
-##Method to create legend for the network viewer-###
+##Method to create legend for the network viewer-####
 
 create_network_legend <- function(network_type, edge_meaning) {
   

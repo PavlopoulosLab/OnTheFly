@@ -83,7 +83,7 @@ ui <- shinyUI(
                         fileInput(inputId = 'upload',label='Select one or more files to upload', multiple = T, placeholder = file_plcholder, accept  = file_extensions),
                         #checkboxInput(inputId = 'preserve_layout', label="Fully Preserve PDF layout (for PDF files only)", value = F),
                         HTML("<p><b>Maximum upload size per file:</b> 10 MB<br>
-                        <b>Acceptable File Types:</b> PDF (.pdf), Office texts (.doc, .docx, .odt, .rtf), Spreadsheet files (.xls, .xlsx, .ods), Flat text (.txt, .tsv, .csv), Images (.bmp, .png, .jpg, .tif), PostScript (.ps, .eps)
+                        <b>Acceptable File Types:</b> PDF (.pdf), Office texts (.doc, .docx, .odt, .rtf), Spreadsheet files (.xls, .xlsx, .ods), Flat text (.txt, .tsv, .csv), Images (.bmp, .png, .jpg, .tif), PostScript (.ps, .eps), XML (.xml)
                              </p><br><b>Note:</b>For images, please use a resolution of at least 150 ppi (pixels per inch)."),
                         hr(),
                         textAreaInput(inputId = 'textinput', label = 'Or...write a text here:', placeholder = txt_plcholder, resize = 'vertical', height="80px"),
@@ -807,6 +807,16 @@ ui <- shinyUI(
                                        hr(),
                                        DT::dataTableOutput("org_table")
                                        
+                              ),
+                              tabPanel("Version History",
+                                       br(),
+                                       h3("Version History"),
+                                       column(12,
+                                              pre(
+                                                includeText("ChangeLog.txt")
+                                              )
+                                       ),
+                                       HTML("<p>More information can be found in OnTheFly's <a href='https://github.com/PavlopoulosLab/OnTheFly/' target='_blank'>GitHub repository</a>. </p>")
                               )
                   )
                 )
@@ -823,8 +833,8 @@ ui <- shinyUI(
                                        br(),
                                        privacy_notice
                               )
-                    
-                    
+                              
+                              
                   )
                 )
         )

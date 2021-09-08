@@ -50,7 +50,7 @@ on.upload_new <- function(upload, session){
         
         
       }
-      else if (tolower(ext) == 'txt') {
+      else if (tolower(ext) == 'txt' || tolower(ext) == 'xml') {
         system(sprintf('wsl libreoffice --convert-to pdf --outdir www/tmp www/tmp/%s.%s', id, ext))
         
         #system(sprintf('unoconv -f pdf www/tmp/%s.txt', id))

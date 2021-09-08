@@ -81,6 +81,7 @@ Online version: http://bib.fleming.gr:3838/OnTheFly/, http://onthefly.pavlopoulo
 - DT
 - xml2
 - httpuv
+- jsonlite
 
 **Note:** Packages can be installed through R or R-studio. **An installation script ("install_libraries.R") is included to automate the process of installing the above**.
 
