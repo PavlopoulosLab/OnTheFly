@@ -79,6 +79,7 @@ Online version: http://bib.fleming.gr:3838/OnTheFly/, http://onthefly.pavlopoulo
 - httr
 - glue
 - DT
+- XML
 - xml2
 - httpuv
 - jsonlite
