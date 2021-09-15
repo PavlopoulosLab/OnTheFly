@@ -20,8 +20,9 @@ library(httr)
 library(glue)
 library(DT)
 library(xml2)
+library(XML)
 library(httpuv)
-
+library(jsonlite)
 
 #use the "install_libraries.R" script to install the above.  Make sure that "shinydahsboardPlus" is at version 0.7.5 or older, otherwise, the tool WILL NOT WORK
 
@@ -30,6 +31,10 @@ library(httpuv)
 max_file_size=10 #10 MB (will be entered below in the options)
 #Maximum number of file uploads
 max_files = 10 #10 files max
+
+#internet options
+#connection timeout value
+connect_timeout=20 # 20 seconds
 
 
 #stop editing from here on
@@ -64,7 +69,8 @@ barplot_table_Pfam <-data.frame()
 
 app_title <- "OnTheFly2.0"
 file_extensions <- c(".pdf",
-                     ".docx", ".doc", 
+                     ".docx", ".doc",
+                     "xml",
                      ".odt", ".odx", ".odtx", 
                      ".rtf", ".dot", 
                      ".txt", ".dat", ".csv", "tsv", 

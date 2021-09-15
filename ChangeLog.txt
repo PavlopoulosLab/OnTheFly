@@ -1,3 +1,6 @@
+2021-09-15:
+-KEGG recently changed its API in the visualization of pathways, with regards to how genes/proteins are highlighted and colored. We have updated OnTheFly to reflect these changes.
+
 2021-09-08:
 -Added a new tab in the "Help" panel, called "Version History". This tab presents a change log (this text), detailing all changes and updates implemented in OnTheFly2.0.
 -Added support for XML documents. XML files are now read natively, and parsed successfully. However, their visualization is rather plain, without any syntax highlighting for the XML tags.

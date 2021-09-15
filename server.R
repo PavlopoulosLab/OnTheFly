@@ -938,6 +938,47 @@ server <- function (input, output, session) {
           {
             go_conv <-gconvert(query=ids_init, organism = org, target=id_output_type, mthreshold = Inf, filter_na = TRUE)
             gost_query <- go_conv$target
+            
+            if (id_output_type!="ENTREZGENE_ACC")
+            {
+              entrezid <- gconvert(ids_init, organism = org, target="ENTREZGENE_ACC", mthreshold = Inf, filter_na = TRUE)
+            }
+            else
+            {
+              entrezid<-go_conv
+            }
+            genes_init<-paste(unlist(entrezid$target), sep=" ", collapse=" ")
+            #print(genes_init)
+            post_args_kegg <- list(otherdb = "ncbi-geneid",
+                                   target="selected",
+                                   org=organisms[organisms$print_name==input$organisms,]$KEGG, # KEGG organism code, e.g. hsa
+                                   unclassified=genes_init
+            )
+            keg_req <- POST("https://www.kegg.jp/kegg-bin/id_conv", body = post_args_kegg, timeout(connect_timeout))
+            if(keg_req$status_code==200)
+            {
+              keg_res<-rawToChar(content(keg_req,"raw"))
+              #print(keg_res)
+              keg_res=gsub("ncbi-geneid:","",keg_res)
+              keg_table<-getNodeSet(htmlParse(keg_res), "//table")
+              keg_df<-readHTMLTable(keg_table[[1]], header=c("Entrez", "KEGG", "Name"), stringsAsFactors=F)
+              
+              entrezid$KEGG<-c()
+              for (i in 1:nrow(entrezid))
+              {
+                if (entrezid$target[i] %in% keg_df$Entrez)
+                {
+                  result<- keg_df[grepl(entrezid$target[i], keg_df$Entrez),]$KEGG
+                }
+                else
+                {
+                  result<-"NULL"
+                }
+                entrezid$KEGG[i]<-result
+              }
+              
+            }
+            
           }
           
           #
@@ -1010,22 +1051,20 @@ server <- function (input, output, session) {
                 if(source =="KEGG")
                 {
                   prefix=organisms[organisms$print_name==input$organisms,]$KEGG
-                  ref_url <- sprintf("%s%s%s", url_base, prefix, id_number)
                   #convert the ENSEMBL IDs to gene names
-                  ensids<- strsplit(query_results$`Positive Hits`[i], ", ")
-                  if (id_output_type=="ENTREZGENE")
+                  ensids<- unlist(strsplit(query_results$`Positive Hits`[i], ", "))
+                  #print(ensids)
+                  genes<-c()
+                  for (j in 1:length(ensids))
                   {
-                    genes = ensids
+                    genes[j]<-entrezid[grepl(go_conv[grepl(ensids[j], go_conv$target),]$input, entrezid$input),]$KEGG
                   }
-                  else
-                  {
-                    #if not entrezgenes, convert them to entrezgenes
-                    entrez <- gconvert(ensids[[1]], organism = org, target="ENTREZGENE", mthreshold = Inf, filter_na = TRUE)
-                    genes<-entrez$target 
-                  }
-                  entrez_url_elem <- paste(unlist(genes), sep = '%20orange+', collapse = '%20orange+')
+                  
+                  entrez_url_elem <- paste(genes, sep = '%20orange+', collapse = '%20orange+')
+                  ref_url <- sprintf("%s%s%s", url_base, prefix, id_number)
                   
                   ref_url <- sprintf("%s+%s%%20orange", ref_url, entrez_url_elem)
+                 # print(ref_url)
                 }
                 else
                 {
@@ -1038,13 +1077,14 @@ server <- function (input, output, session) {
                 ref_url<-""
               }
               query_links[[term_id]] <- ref_url
+              #query_results$`Term ID`[i] <- sprintf("<a href='%s' target='_blank'>%s</a>", query_links[[term_id]], term_id)
               if(ref_url !="")
               {
                 query_results$`Term ID`[i] <- sprintf("<a href='%s' target='_blank'>%s</a>", ref_url, term_id)
               }
               
             }
-            
+
             #Reordering columns for output: 1. Source, 2. ID, 3. Name, 4. P-value, 5. Term Size, 6. Query Size, 7. Intersection size, 8. Positive Hits, 9. -log10(pval) 10. enrichment score
             gost_output_table <- query_results[,c(6, 5, 7, 1, 2, 3, 4, 8,9,10)]
             
