@@ -17,7 +17,7 @@ if("devtools" %in% rownames(installed.packages()))
 libraries <- c("shiny", "shinyjs", "shinythemes", "shinydashboard", "dashboardthemes",
   "shinycssloaders", "shinyWidgets", "shinyalert", "shinyBS", "gprofiler2",
   "data.table", "stringr", "plotly", "dplyr", "tidyverse", "curl", "glue",
-  "DT", "xml2", "httpuv", "httr")
+  "DT", "XML", "xml2", "httpuv", "httr", "jsonlite")
 
 for (i in 1:length(libraries))
 {
