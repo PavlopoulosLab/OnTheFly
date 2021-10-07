@@ -2228,8 +2228,8 @@ server <- function (input, output, session) {
         {
           removeModal()
           shinyalert(
-            title = 'Connection to STRING could not be established',
-            text = 'It seems the STRING web server is not responding. Please try again later...',
+            title = 'Connection to STITCH could not be established',
+            text = 'It seems the STITCH web server is not responding. Please try again later...',
             size = 's', 
             closeOnEsc = T,
             type = 'error',

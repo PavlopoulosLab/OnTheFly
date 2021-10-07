@@ -1,3 +1,7 @@
+2021-10-07:
+-The OnTheFly2.0 paper has been published in Nucleic Acids Research Genomics and Bioinformatics!!!!!  The reference to the paper has been added to the OnTheFly2.0 GUI.
+-Fixed the title and text in the STITCH "Connection Error" message to properly reference STITCH, instead of STRING.
+
 2021-09-15:
 -KEGG recently changed its API in the visualization of pathways, with regards to how genes/proteins are highlighted and colored. We have updated OnTheFly to reflect these changes.
 
