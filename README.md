@@ -175,7 +175,7 @@ or
 
 
 ### Run using Docker
-A Docker repoitory for OnTheFly<sup>2.0</sup> can be found at [https://hub.docker.com/r/pavlopouloslab/onthefly](https://hub.docker.com/r/pavlopouloslab/onthefly). The image already has every dependency pre-installed, meaning that you simply have to pull it and run it through a Docker container. This, of course, requires some familiarity with Docker.
+A Docker repository for OnTheFly<sup>2.0</sup> can be found at [https://hub.docker.com/r/pavlopouloslab/onthefly](https://hub.docker.com/r/pavlopouloslab/onthefly). The image already has every dependency pre-installed, meaning that you simply have to pull it and run it through a Docker container. This, of course, requires some familiarity with Docker.
 
 1. Install and configure Docker in your system. You can find the procedure for doing this in the [Docker documentation](https://docs.docker.com/engine/install/).
 2. (optional) Install a graphical application for managing Docker, such as Docker Desktop (Windows, MacOS) or Portainer (Windows, Linux, MacOS).
