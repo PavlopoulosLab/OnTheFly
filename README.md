@@ -17,6 +17,7 @@ A text-mining web application for automated named entity recognition, document a
   * [On Windows](#on-windows)
     + [Pure WSL installation](#pure-wsl-installation)
 	+ [Hybrid Windows and WSL installation](#hybrid-windows-and-wsl-installation)
+  * [Run using Docker](#run-using-docker)
 
 4 [Advanced configuration operations](#advanced-configuration-operations)
  - [Change file size and number limitations](#change-file-size-and-number-limitations)
@@ -171,6 +172,23 @@ or
 4.  Install [R](https://cloud.r-project.org/bin/windows/) (version 3.6.1 or newer) and [R-studio](https://www.rstudio.com/products/rstudio/download/#download) for Windows.
 5. Install all required libraries in R (or in R-studio), by loading and running the "install_libraries.R" script.
 6. Open the tool's project file (OnTheFly.rproj) in R-studio, select  **ui.R**, **server.R** or **global.R** and click "Run App".  The first time you do this, your antivirus or firewall may request that you grant access to a program called "wsl".  This is a component of the WSL environment that allows you to run Linux applications in native Windows (i.e. outside the WSL environment). 
+
+
+### Run using Docker
+A Docker repoitory for OnTheFly<sup>2.0</sup> can be found at [https://hub.docker.com/r/pavlopouloslab/onthefly](https://hub.docker.com/r/pavlopouloslab/onthefly). The image already has every dependency pre-installed, meaning that you simply have to pull it and run it through a Docker container. This, of course, requires some familiarity with Docker.
+
+1. Install and configure Docker in your system. You can find the procedure for doing this in the [Docker documentation](https://docs.docker.com/engine/install/).
+2. (optional) Install a graphical application for managing Docker, such as Docker Desktop (Windows, MacOS) or Portainer (Windows, Linux, MacOS).
+3. Pull the OnTheFly image from DockerHub:
+
+>     docker pull pavlopouloslab/onthefly
+
+4. Create a container and run the image. You can do this through Docker Desktop/Portainer, or through the command line. In any case, you will need to assign a port for the created container. Note that the image, by default, has port 3838 exposed for the created container. Therefore, published ports should be set-up in the format XXXX:3838, where "XXXX" is the port assigned to the host (your computer), e.g. 8084. This can be done with a command such as the following:
+ 
+>     docker run -ti --rm -p 8084:3838 pavlopouloslab/onthefly
+
+and in this case, the container would be accessible through a web browser in the address http://localhost:8084.
+
 
 ----
 
