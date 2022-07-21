@@ -15,13 +15,13 @@ in accordance with the original code's license.
 //Original declaration and copyright
 /*
  * (c) Hellenic Center for Marine Research, 2015
- * 
+ *
  * Licensed under the The BSD 2-Clause License; you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the license at
- * 
+ *
  * http://opensource.org/licenses/BSD-2-Clause
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -96,7 +96,7 @@ in accordance with the original code's license.
                         "<div id='entity_legend_disease_div'              >Disease</div>"     +
                         "<div id='entity_legend_phenotype_div'            >Phenotype</div>"
                         -->
-                         
+
  --- -24 not tagged anymore
  ---         "<div id='entity_legend_gene_protein_div'    >Protein</div>"               +
         "<div id='entity_legend_chemical_compound_div'    >Chemical compound</div>"     +
@@ -105,8 +105,8 @@ in accordance with the original code's license.
         "<div id='entity_legend_tissue_div'               >Tissue</div>"                +
         "<div id='entity_legend_disease_div'              >Disease/phenotype</div>"     +
         "<div id='entity_legend_environment_div'          >Environment</div>"           ;
-    
-                         
+
+
 */
 
 
@@ -118,7 +118,7 @@ in accordance with the original code's license.
 
 //Production server for EXTRACT/TAGGER as of 2016 November
 //NB: the unix slash at the end is compulsory
-var cpr_tagger_url = "http://bib.fleming.gr:8091/extract/"  //the web server powering tagger and its tools
+var cpr_tagger_url = "https://tagger.jensenlab.org/"  //the web server powering tagger and its tools
 var cpr_extract_base_url = "https://extract.jensenlab.org/"; // the web server of the extract front-end, this contains all CSS and JS scripts required for formatting and styling results
 
 //The Extract Tools
@@ -127,7 +127,7 @@ var get_tagged_html_webapp = "GetHTML"; //the main tool that tags HTML documents
 var entities_webapp="GetEntities"; // Tool that returns a json or tsv table file with all tagged entities in a text
 
 //timeout options (times in milliseconds)
-var tagger_response_waiting_period = 60000; //abort if the tagger does not respond within 60 seconds 
+var tagger_response_waiting_period = 60000; //abort if the tagger does not respond within 60 seconds
 // NOTE: this increase to 60 seconds was done because Chromium-based browsers (Chromium itself, Google Chrome and the new Microsoft Edge) would produce
 //CORS policy errors with the original timeout (30 seconds), when dealing with medium to large documents.  I don't know why, probably something to do with the tagger.jensenlab.org server
 var extract_popup_mouseover_waiting_period = 1000;  //wait time on mouse over a full page tag before launching the EXTRACT Popup with that tag
@@ -193,7 +193,7 @@ function extract_getScript(url,success){
    var head = document.getElementsByTagName("head")[0], done = false;
    var script = document.createElement("script");
    script.src = url;
-   
+
    // Attach handlers for all browsers
    script.onload = script.onreadystatechange = function(){
       if ( !done && (!this.readyState ||
@@ -206,35 +206,35 @@ function extract_getScript(url,success){
 }
 
 function extract_show_entity_type_legend(extract_head) {
-    
+
     //house keeping: add scripts and styles (1 of 2)
     extract_addStyle(extract_head, "", cpr_extract_base_url + "styles/extract.css")
-    
+
     // create legend popup elements
     ////////////////////////
-    
+
     // legend popup outermost container
     var extract_legend_div = document.createElement('div');
     extract_legend_div.setAttribute ( "id","extract_legend");
-    
+
     //legend popup header container
     var extract_legend_header_div = document.createElement('div');
     extract_legend_header_div.setAttribute ( "id", "extract_legend_header");
-    
+
     //legend popup header action links/buttons
-    
+
     // Close legend popup
     var legend_close_anchor = document.createElement('a');
     legend_close_anchor.setAttribute ( "id", "legend_close_anchor");
     legend_close_anchor.setAttribute ( "onclick", "var extract_legend_elem = document.getElementById('extract_legend'); extract_legend_elem.parentNode.removeChild(extract_legend_elem);" );
     legend_close_anchor.setAttribute ( "title", "Close Popup");
     legend_close_anchor.innerHTML =  "&#10005;"; //unicode for MULTIPLICATION X
-    
+
     //Legend popup header title
     var extract_legend_header_title_div = document.createElement('div');
     extract_legend_header_title_div.setAttribute ( "id","extract_legend_header_title");
     extract_legend_header_title_div.innerHTML = "EXTRACT";
-    
+
     //Legend popup content
     var extract_legend_content        = document.createElement('div');
     extract_legend_content.setAttribute ( "id", "extract_legend_content");
@@ -246,31 +246,31 @@ function extract_show_entity_type_legend(extract_head) {
         "<div id='entity_legend_tissue_div'               >Tissue</div>"                +
         "<div id='entity_legend_disease_div'              >Disease/phenotype</div>"     +
         "<div id='entity_legend_cellular_component_div'   >Gene Ontology term</div>"    ;
-    
+
     // Build the popup element hierarchy
     ///////////////////////////////////
-    
+
     //legend popup header coomponents in popup header
     extract_legend_header_div.appendChild( extract_legend_header_title_div );
     extract_legend_header_div.appendChild( legend_close_anchor );
-    
+
     // legend popup header and content in legend popup
     extract_legend_div.appendChild( extract_legend_header_div );
     extract_legend_div.appendChild( extract_legend_content );
-    
+
     // legend popup in the page (enable draggability tool)
     extract_body.appendChild ( extract_legend_div );
-    
-    
+
+
     //house keeping: add scripts and styles (2 of 2)
     //NB: the order is important!
     // jQuery-ui draggability is enabled after both jQuery and jQuery-ui have been successfully loaded
     extract_getScript('https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js',function(){
        if ( debug ) { console.log( 'jQuery loaded' ) };
     });
-    extract_getScript('https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js',function(){ 
+    extract_getScript('https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js',function(){
        $('#extract_legend').draggable() ;
-       if (debug ) { console.log( 'jQuery-ui loaded, draggable enabled' ) }; 
+       if (debug ) { console.log( 'jQuery-ui loaded, draggable enabled' ) };
     });
 
 }
@@ -280,28 +280,28 @@ function extract_show_entity_type_legend(extract_head) {
 function extract_show_loading_indicator (extract_body)
 {
    // prepare the loading spinner image and message HTML
-   var extract_loading_image=  "../images/loading.gif";   
+   var extract_loading_image=  "../images/loading.gif";
    var processing_page_message = "Performing Entity Search.  Please Wait";
-   var loading_html = "<img id='extract_loading_indicator' src='"+extract_loading_image+"' style='width:150px;height:150px' /><br>"+processing_page_message; 
-   
+   var loading_html = "<img id='extract_loading_indicator' src='"+extract_loading_image+"' style='width:150px;height:150px' /><br>"+processing_page_message;
+
    // prepare the loading spinner container div
    var extract_loading_indicator_div = document.createElement("div");
-   
+
    extract_loading_indicator_div.id = "extract_loading_indicator_div";
 
    extract_loading_indicator_div.innerHTML = loading_html;
 
-   
+
    extract_loading_indicator_div.style.setProperty("display"    , "block"     , "important");
    extract_loading_indicator_div.style.setProperty("background-color" , "#fff", "important");
    extract_loading_indicator_div.style.setProperty("opacity"    , "1"         , "important");
    extract_loading_indicator_div.style.setProperty("border"     , "solid 2px #bbb"  , "important");
-   
+
    extract_loading_indicator_div.style.setProperty("position"   , "fixed"  , "important");
-   extract_loading_indicator_div.style.setProperty("left"       , "50%"  , "important"); 
+   extract_loading_indicator_div.style.setProperty("left"       , "50%"  , "important");
    extract_loading_indicator_div.style.setProperty("top"        , "20%"  , "important");
    extract_loading_indicator_div.style.setProperty("transform"  , "translate(-50%, -50%)"  , "important");
-   
+
    //NB: the final width is 350px + 50px + 50px = 450px (due to left, right padding)
    extract_loading_indicator_div.style.setProperty("width"      , "200px"  , "important");
    //NB: the final height is 165px + 300px = 450px (due to padding-top)
@@ -315,11 +315,11 @@ function extract_show_loading_indicator (extract_body)
    extract_loading_indicator_div.style.setProperty("font-size"       , "18px"    , "important");
    extract_loading_indicator_div.style.setProperty("font-family"       , "Arial"    , "important");
    extract_loading_indicator_div.style.setProperty("text-align"      , "center"  , "important");
-   
-   
+
+
    //add the container div to the page body
    extract_body.appendChild(extract_loading_indicator_div);
-   
+
 }
 
 function extract_close_loading_indicator() {
@@ -333,9 +333,9 @@ function extract_close_loading_indicator() {
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Main Operation (invoked upon button click, ie injection of this script)
-///////////////////////////////////////////////////////////////////////////////////////////// 
+/////////////////////////////////////////////////////////////////////////////////////////////
 function extract_tag_all_html (extract_body, extract_head, entity_types) {
- 
+
    //if div "extract_full_page_tagged" already exists, then the page
    //has already been fully tagged. Returns and does not retag the page
    /*if ( document.getElementById("extract_full_page_tagged") ) {
@@ -343,20 +343,20 @@ function extract_tag_all_html (extract_body, extract_head, entity_types) {
    }*/
    //this is the first time this page is being fully tagged, proceed
    /////////////////////////////////////////////////////////////////
-   
+
 
    function throw_alert (arg){
       if ( document.getElementById("extract_loading_indicator") ) {  extract_close_loading_indicator();  }
-      if (arg === undefined) { alert ('EXTRACT is currently not available, please try again in a while'); }      
+      if (arg === undefined) { alert ('EXTRACT is currently not available, please try again in a while'); }
       throw new Error('EXTRACT: connection timed out');
    }
 
    var extract_body_text = extract_body.innerHTML;
-  
-   
+
+
    var extract_params = "entity_types=" + entity_types + "&document=";
    extract_params += encodeURIComponent ( extract_body_text );
-  
+
    //start the work in progress spinner and the tagger_response_timer
    //abort if the tagger does not respond within 'tagger_response_waiting_period' seconds
    extract_show_loading_indicator(extract_body);
@@ -371,16 +371,16 @@ function extract_tag_all_html (extract_body, extract_head, entity_types) {
    }
    else {
        extract_xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-   }   
+   }
    extract_xmlhttp.onload = function ( progressEvent ) {
-            
+
       if (extract_xmlhttp.readyState == 4) {
-                    
+
          if (extract_xmlhttp.status == 200) {
             //console.log(extract_body_text);
             //NB: by resetting the body.innerHTML the loading img and container div are automatically removed
             //    as they were not components of the page when the initial body.innerHTML was defined!
-            clearTimeout(tagger_response_timer_id);  
+            clearTimeout(tagger_response_timer_id);
             /*var tagged_text = document.body.innerHTML;
             tagged_text = extract_xmlhttp.responseText;
             console.log(tagged_text);*/
@@ -394,16 +394,16 @@ function extract_tag_all_html (extract_body, extract_head, entity_types) {
          }
       }
    };
-      
-           
-   
+
+
+
    //send request after all data, url and progress events have beed defined
    var url=cpr_tagger_url + get_tagged_html_webapp;
    extract_xmlhttp.open("POST", url, true);
    extract_xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");//the connection needs to be open first
    extract_xmlhttp.send( extract_params );
-   
-   
+
+
 }
 
 
@@ -420,7 +420,7 @@ function extract_tag_all_html (extract_body, extract_head, entity_types) {
 function extract_show_popup( user_selected_text ) {
 
     var selected_text = arguments[0];
-    
+
     //check and apply length limit if necessary
     if (selected_text.length > selected_text_character_limit)
     {
@@ -428,55 +428,55 @@ function extract_show_popup( user_selected_text ) {
        selected_text = selected_text.replace(/\s(\w+)$/, ""); //removes the last word, i.e. removes partial word truncations
        selected_text = selected_text + " [...]";
     }
-    
+
     //get the source page url
     var source_page_uri = encodeURIComponent ( window.location.href );
-    
-    
+
+
     if ( debug ) {   console.log( "Selected text for curation: " + selected_text ); }
     if ( debug ) {   console.log( "Source page is: " + decodeURIComponent ( source_page_uri )); }
     if ( debug ) {   console.log( "Entity types are: " + entity_types ); }
-    
-    
+
+
     // house keeping: close any previous instances of the popup
     if ( document.getElementById("extract_popup") != null) {
        document.getElementById("extract_popup").remove();
     }
-    
+
     // house keeping: add scripts and styles
     // NB: the order is important!
     // jQuery-ui draggability is enabled after both jQuery and jQuery-ui have been successfully loaded
     extract_getScript('https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js',function(){
        if ( debug ) { console.log( 'jQuery loaded' ) };
     });
-    extract_getScript('https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js',function(){ 
+    extract_getScript('https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js',function(){
        $('#extract_popup').draggable() ;
-       if (debug ) { console.log( 'jQuery-ui loaded, draggable enabled' ) }; 
+       if (debug ) { console.log( 'jQuery-ui loaded, draggable enabled' ) };
     });
     extract_addStyle(extract_head, "", cpr_extract_base_url + "styles/extract.css")
-    
+
     // create popup elements
     ////////////////////////
-    
+
     // popup outermost container
     var extract_popup_div = document.createElement('div');
     extract_popup_div.setAttribute ( "id","extract_popup");
     extract_popup_div.setAttribute ( "class","extract_popup");
-    
+
     //popup header container
     var extract_popup_header_div = document.createElement('div');
     extract_popup_header_div.setAttribute ( "id", "extract_popup_header");
     extract_popup_header_div.setAttribute ( "class", "extract_popup_header");
-    
+
     //popup header action links/buttons
-    
+
     // Open help page
     var help_anchor  = document.createElement('a');
     help_anchor.setAttribute ( "id", "help_anchor");
     help_anchor.setAttribute ( "onclick","extract_openInNewTab( cpr_extract_base_url + '#extract_help');");
     help_anchor.setAttribute ( "title", "Open Help Page");
     help_anchor.innerHTML = "?";
-    
+
     // Open popup in a new page
     var pop_out_anchor = document.createElement('a');
     pop_out_anchor.setAttribute ( "id", "pop_out_anchor");
@@ -484,49 +484,49 @@ function extract_show_popup( user_selected_text ) {
     pop_out_anchor.setAttribute ( "onclick", "extract_openInNewTab( '"+new_tab_url+"');" );
     pop_out_anchor.setAttribute ( "title", "Open Popup in New Tab");
     pop_out_anchor.innerHTML = "&#8679;"; //unicode for the UP pointing arrow like the shift button
-    
+
     // Close popup
     var close_anchor = document.createElement('a');
     close_anchor.setAttribute ( "id", "close_anchor");
     close_anchor.setAttribute ( "onclick", "var extract_popup_elem = document.getElementById('extract_popup'); extract_popup_elem.parentNode.removeChild(extract_popup_elem);" );
     close_anchor.setAttribute ( "title", "Close Popup");
     close_anchor.innerHTML =  "&#10005;"; //unicode for MULTIPLICATION X
-    
-    
-    
+
+
+
     //popup header title
     var extract_header_title_div = document.createElement('div');
     extract_header_title_div.setAttribute ( "id","extract_header_title");
     extract_header_title_div.innerHTML = "EXTRACT";
-    
+
     //popup iframe
     var extract_iframe = document.createElement('iframe');
     extract_iframe.setAttribute ( "id", "extract_iframe");
     extract_iframe.setAttribute ( "class", "extract_iframe");
     var iframe_url = cpr_tagger_url + popup_webapp +"?document=" + encodeURIComponent( selected_text ) + "&entity_types=" + entity_types + "&uri=" + source_page_uri ;
     extract_iframe.setAttribute ( "src", iframe_url);
-    
-    
+
+
     // Build the popup element hierarchy
     ///////////////////////////////////
-    
+
     //popup header coomponents in popup header
     extract_popup_header_div.appendChild( extract_header_title_div );
     extract_popup_header_div.appendChild( help_anchor );
     extract_popup_header_div.appendChild( pop_out_anchor );
     extract_popup_header_div.appendChild( close_anchor );
-    
+
     // popup header and iframe in popup
     extract_popup_div.appendChild( extract_popup_header_div );
     extract_popup_div.appendChild( extract_iframe );
-    
+
     // popup in the page (enable draggability too)
     extract_body.appendChild ( extract_popup_div );
     //add the ESC key pressed event hanlder to close the popup
     document.addEventListener ("keyup", function ( event ) { extract_handle_key_up ( event ) }, true);
-    
-    
-    
+
+
+
     //House keeping: clean up javascripts
     extract_clean_up();
 }//end of extract_show_popup
@@ -621,7 +621,7 @@ function startReflectPopupTimer(){
 
 function showReflectPopup() {
     var tag_matched_text = arguments[1];
-    extract_show_popup ( tag_matched_text ); 
+    extract_show_popup ( tag_matched_text );
 }
 
 

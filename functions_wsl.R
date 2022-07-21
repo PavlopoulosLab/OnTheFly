@@ -38,7 +38,7 @@ on.upload_new <- function(upload, session){
     for (i in 1:nrow(upload)) {
       showModal(modalDialog(span(sprintf('Please wait for file "%s" to be processed...', upload$name[[i]]), style='color:lightseagreen'), footer = NULL, style = 'font-size:20px; text-align:center;'))
       id <- sprintf("%s.%s", sid, as.numeric(Sys.time()))
-      
+
       ext <- file_ext(upload$name[[i]])
       error = 0 #check for errors
       file.copy(upload$datapath[[i]], sprintf('www/tmp/%s.%s', id, ext), overwrite = F);
@@ -47,19 +47,19 @@ on.upload_new <- function(upload, session){
         system(sprintf("wsl perl -0777 -i -pe 's/<script.*?<.script>//imsg' www/tmp/%s.html", id))
         system(sprintf("wsl bash www/remove_tags.sh www/tmp/%s.html > www/tmp/%s-ed.html", id, id))
         system(sprintf("wsl mv www/tmp/%s-ed.html www/tmp/%s.html", id, id))
-        
-        
+
+
       }
       else if (tolower(ext) == 'txt' || tolower(ext) == 'xml') {
         system(sprintf('wsl libreoffice --convert-to pdf --outdir www/tmp www/tmp/%s.%s', id, ext))
-        
+
         #system(sprintf('unoconv -f pdf www/tmp/%s.txt', id))
         system(sprintf('wsl pdf2htmlEX --process-outline 0 --optimize-text 1 --zoom 1.3 --tounicode 1 --space-as-offset 1 www/tmp/%s.pdf www/tmp/%s.html', id, id))
         system(sprintf("wsl perl -0777 -i -pe 's/<script.*?<.script>//imsg' www/tmp/%s.html", id))
       }
-      else if (tolower(ext) %in% image_exts) 
+      else if (tolower(ext) %in% image_exts)
       {#-resample 72
-        
+
         img_info <- strsplit(system(sprintf('wsl identify -format "%%x,%%y,%%w,%%h" www/tmp/%s.%s', id, ext), intern=TRUE), ",")
         spl_x <- strsplit(img_info[[1]][1], " ")
         spl_y <- strsplit(img_info[[1]][1], " ")
@@ -69,7 +69,7 @@ on.upload_new <- function(upload, session){
         height<- as.integer(img_info[[1]][4])
         print(img_info)
         #-density 300 -units PixelsPerInch
-        
+
         if( res_x <150 | res_y <150)
         {
           error = 1
@@ -81,11 +81,11 @@ on.upload_new <- function(upload, session){
         else  { #-density 600
           system(sprintf("wsl convert -units PixelsPerInch -size %dx%d -alpha off www/tmp/%s.%s www/tmp/%s.png", width,height, id, ext, id))
           cat(sprintf("Perform OCR operation...\n"), file=stderr())
-          system(sprintf("wsl ocrmypdf --output-type pdf --remove-vectors --threshold --force-ocr www/tmp/%s.png www/tmp/%s-OCR.pdf", id, id))
+          system(sprintf("wsl ocrmypdf --output-type pdf --remove-vectors --force-ocr www/tmp/%s.png www/tmp/%s-OCR.pdf", id, id))
           system(sprintf('wsl pdf2htmlEX --process-outline 0 --optimize-text 1 --zoom 5 --tounicode 1 --space-as-offset 1 www/tmp/%s-OCR.pdf www/tmp/%s.html', id, id))
-          system(sprintf("wsl perl -0777 -i -pe 's/<script.*?<.script>//imsg' www/tmp/%s.html", id)) 
+          system(sprintf("wsl perl -0777 -i -pe 's/<script.*?<.script>//imsg' www/tmp/%s.html", id))
           system(sprintf("wsl bash www/remove_tags.sh www/tmp/%s.html > www/tmp/%s-ed.html", id, id))
-          system(sprintf("wsl mv www/tmp/%s-ed.html www/tmp/%s.html", id, id)) 
+          system(sprintf("wsl mv www/tmp/%s-ed.html www/tmp/%s.html", id, id))
         }
       }
       else if (tolower(ext) %in% post_exts)
@@ -93,18 +93,18 @@ on.upload_new <- function(upload, session){
         system(sprintf("wsl ps2pdf www/tmp/%s.%s www/tmp/%s.pdf", id, ext, id))
         cat(sprintf("wsl ps2pdf www/tmp/%s.%s www/tmp/%s.pdf \n", id, ext, id), file=stderr())
         Sys.sleep(10)
-        system(sprintf("wsl ocrmypdf --output-type pdf --remove-vectors --threshold --force-ocr www/tmp/%s.pdf www/tmp/%s-OCR.pdf", id, id))
+        system(sprintf("wsl ocrmypdf --output-type pdf --remove-vectors --force-ocr www/tmp/%s.pdf www/tmp/%s-OCR.pdf", id, id))
         system(sprintf('wsl pdf2htmlEX --process-outline 0 --optimize-text 1 --zoom 5 --tounicode 1 --space-as-offset 1 www/tmp/%s-OCR.pdf www/tmp/%s.html', id, id))
-        system(sprintf("wsl perl -0777 -i -pe 's/<script.*?<.script>//imsg' www/tmp/%s.html", id)) 
+        system(sprintf("wsl perl -0777 -i -pe 's/<script.*?<.script>//imsg' www/tmp/%s.html", id))
         system(sprintf("wsl bash www/remove_tags.sh www/tmp/%s.html > www/tmp/%s-ed.html", id, id))
         system(sprintf("wsl mv www/tmp/%s-ed.html www/tmp/%s.html", id, id))
       }
       else if (tolower(ext) %in% ppt_exts)
       {
         system(sprintf('wsl libreoffice --convert-to pdf --outdir www/tmp www/tmp/%s.%s', id, ext))
-        system(sprintf("wsl ocrmypdf --output-type pdf --remove-vectors --threshold --force-ocr www/tmp/%s.pdf www/tmp/%s-OCR.pdf", id, id))
+        system(sprintf("wsl ocrmypdf --output-type pdf --remove-vectors --force-ocr www/tmp/%s.pdf www/tmp/%s-OCR.pdf", id, id))
         system(sprintf('wsl pdf2htmlEX --process-outline 0 --optimize-text 1 --zoom 1.3 --tounicode 1 --space-as-offset 1 www/tmp/%s-OCR.pdf www/tmp/%s.html', id, id))
-        system(sprintf("wsl perl -0777 -i -pe 's/<script.*?<.script>//imsg' www/tmp/%s.html", id)) 
+        system(sprintf("wsl perl -0777 -i -pe 's/<script.*?<.script>//imsg' www/tmp/%s.html", id))
         system(sprintf("wsl bash www/remove_tags.sh www/tmp/%s.html > www/tmp/%s-ed.html", id, id))
         system(sprintf("wsl mv www/tmp/%s-ed.html www/tmp/%s.html", id, id))
       }
@@ -137,7 +137,7 @@ on.upload_new <- function(upload, session){
 #----Save the textInput in a file and convert it to html----####
 txt.file_new <- function (textinput, session) {
   sid=session$token
-  
+
   if(length(file_ids)>0)
   {
     chk<-list()
@@ -167,14 +167,14 @@ txt.file_new <- function (textinput, session) {
   {
     start=0;
   }
-  
-  
+
+
   if(length(file_ids)<max_files)
   {
     if (textinput != "") {
-      
+
       showModal(modalDialog(span('Please wait for the text to be processed', style='color:lightseagreen'), footer = NULL, style = 'font-size:20px; text-align:center;'))
-      
+
       timeid=as.numeric(Sys.time())
       id <- sprintf("%s.%s", sid, timeid)
       conn <- file(sprintf('www/tmp/%s.txt', toString(id)) )
@@ -183,7 +183,7 @@ txt.file_new <- function (textinput, session) {
       system(sprintf('wsl libreoffice --convert-to pdf --outdir www/tmp www/tmp/%s.txt', id))
       system(sprintf('wsl pdf2htmlEX --process-outline 0 --optimize-text 1 --zoom 1.3 www/tmp/%s.pdf www/tmp/%s.html', id, id))
       system(sprintf("wsl perl -0777 -i -pe 's/<script.*?<.script>//imsg' www/tmp/%s.html", id))
-      
+
       file_ids<<-append(toString(id), file_ids)
       file_names<<-append(sprintf('custom_text-%s', toString(timeid)), file_names)
       file_paths<<-append(sprintf("tmp/%s.html", id), file_paths)
@@ -251,8 +251,8 @@ show_hide_options <- function (input_id, id, box_id, session) {
 csv.entities <- function (entities) {
   csv <- entities[[1]]
   #csv2 <- entities[[1]]
-  
-  
+
+
   if(csv != '') {
     html_id_list=str_split(entities[[2]], "/", simplify = TRUE)
     htmlid <- gsub(".html", "", html_id_list[length(html_id_list)]);
@@ -261,7 +261,7 @@ csv.entities <- function (entities) {
     name <- file_names[[index]]
     write.table(csv, sprintf('www/tmp/%s_entities.csv', id), sep=',', quote = FALSE, col.names = F, row.names = F)
     fcsv <- read.csv(sprintf('www/tmp/%s_entities.csv', id), header = F, sep = ',' , stringsAsFactors=FALSE)
-    
+
     uniq_df=data.frame(matrix(ncol=5))
     ent_seen_ids<-c()
     for (i in 1:nrow(fcsv))
@@ -281,19 +281,19 @@ csv.entities <- function (entities) {
 
     csv <- fcsv
     csv2 <- uniq_df
-    
-    
+
+
     names(csv)[1] <- 'Name'
     names(csv)[2] <- 'Type'
     names(csv)[3] <- 'Identifier'
-    
+
     names(csv2)[1] <- 'Name'
     names(csv2)[2] <- 'Type'
     names(csv2)[3] <- 'Identifier'
     names(csv2)[4] <- 'Document'
     names(csv2)[5] <- "D"
     setcolorder(csv2, c('Identifier', 'Type', 'Name', 'Document','D'))
-    
+
     csv$Type <- as.character(csv$Type)
     csv <- csv[(csv$Type != '-3'), ]
     csv$Type[grep("^-", csv$Type, invert = T)] <- 'Protein'
@@ -310,7 +310,7 @@ csv.entities <- function (entities) {
     csv$Type[csv$Type == "-30"] <- 'MPheno phenotype'
     csv$Type[csv$Type == "-31"] <- 'NBO behavior'
     csv$Type[csv$Type == "-36"] <- 'Mammalian phenotype'
-    
+
     csv2$Type <- as.character(csv2$Type)
     csv2 <- csv2[(csv2$Type != '-3'), ]
     csv2$Type[grep("^-", csv2$Type, invert = T)] <- 'Protein'
@@ -327,7 +327,7 @@ csv.entities <- function (entities) {
     csv2$Type[csv2$Type == "-30"] <- 'MPheno phenotype'
     csv2$Type[csv2$Type == "-31"] <- 'NBO behavior'
     csv2$Type[csv2$Type == "-36"] <- 'Mammalian phenotype'
-    
+
     CIDs <- substring(csv$Identifier[grep("^CIDs", csv$Identifier)], 5)
     BTO <- substring(csv$Identifier[grep("^BTO", csv$Identifier)], 5)
     DOID <- substring(csv$Identifier[grep("^DOID", csv$Identifier)], 6)
@@ -335,12 +335,12 @@ csv.entities <- function (entities) {
     FYPO <- substring(csv$Identifier[grep("^FYPO", csv$Identifier)], 6)
     PR <- substring(csv$Identifier[grep("^PR", csv$Identifier)], 4)
     NBO <- substring(csv$Identifier[grep("^NBO", csv$Identifier)], 5)
-    
+
     exp_vec <- c("^CIDs", "^[[:digit:]]+", "^GO",
                  "^BTO", "^DOID", "^ENVO",
                  "^APO", "^FYPO", "^PR",
                  "^NBO", "^MP", "^ENS", "^FBpp")
-    
+
     link_vec <- list(
       paste0("<a href='", sprintf('https://pubchem.ncbi.nlm.nih.gov/compound/%s', CIDs), "' target = '_blank'>", csv$Identifier[grep("^CIDs", csv$Identifier)], "</a>"),
       paste0("<a href='", sprintf('https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=%s', csv$Identifier[grep("^[[:digit:]]+", csv$Identifier)]), "' target = '_blank'>", csv$Identifier[grep("^[[:digit:]]+", csv$Identifier)], "</a>"),
@@ -356,10 +356,10 @@ csv.entities <- function (entities) {
       paste0("<a href='", sprintf('https://www.ensembl.org/id/%s', csv$Identifier[grep("^ENS", csv$Identifier)]), "' target = '_blank'>", csv$Identifier[grep("^ENS", csv$Identifier)], "</a>"),
       paste0("<a href='", sprintf('http://ensemblgenomes.org/id/%s', csv$Identifier[grep("^FBpp", csv$Identifier)]), "' target = '_blank'>", csv$Identifier[grep("^FBpp", csv$Identifier)], "</a>"))
     csv$Identifier <- src.link(csv$Type, csv$Identifier, exp_vec, link_vec)
-    
+
     #write.table(csv, sprintf('www/tmp/%s_processed.csv', id), sep=',', quote = FALSE, col.names = T, row.names = F)
     #write.table(csv2, sprintf('www/tmp/%s_processed.csv', id), sep=',', quote = FALSE, col.names = T, row.names = F)
-    
+
     return(list(htmlid, csv, csv2))
   }
 }
@@ -384,7 +384,7 @@ src.link <- function (type, identifier, exps, links) {
 #----Save selected identifiers in csv----####
 on.selection <- function (input_row_selected, react_df, selected.values, all_sel_ids) {
   rows_selected <- input_row_selected
-  selected.values <- react_df %>% filter(row_number() %in% rows_selected) 
+  selected.values <- react_df %>% filter(row_number() %in% rows_selected)
   unlist(selected.values)
   all_sel_ids$dt <- rbind(all_sel_ids$dt, selected.values)
   all_sel_ids$dt <- unique(all_sel_ids$dt)
@@ -404,11 +404,11 @@ on.selection <- function (input_row_selected, react_df, selected.values, all_sel
 
 #-Create Functional enrichment results table with DT --####
 create_FE_table <- function(datatable) {
-  
-  
+
+
   out <- DT::renderDataTable(server = F, {
-    
-    
+
+
     datatable(datatable,
               rownames = F,
               escape = F,
@@ -430,9 +430,9 @@ create_FE_table <- function(datatable) {
 #--create TransFac URL-####
 create_transfac_url <- function(tf_id){
   #requires the packages: curl, stringr
-  
+
   search_tf <- tf_id  #  for example, "M04140"
-  
+
   #create handle for POST request to a form
   tf_handle <-new_handle()
   #POST form data
@@ -470,16 +470,16 @@ enrich_score <- function(intersection_size, term_size){
 #-the main barplot function-##
 handleBarPlot <- function(DB_source, sliderBarplot, barplotMode, from_barPlotSelect, output, session){
   data_table <- barplot_table
-  
+
   if (!identical(DB_source, "")){
     gostres_m <- data_table
     gostres_m <- gostres_m[0,]
-    for (i in 1:length(DB_source)) 
+    for (i in 1:length(DB_source))
     {
       gostres_m<- rbind(gostres_m, data_table[grepl(DB_source[[i]],data_table$Source),])
     }
-    
-    if (nrow(gostres_m>0)) 
+
+    if (nrow(gostres_m>0))
     {
       if (from_barPlotSelect) {
         if(nrow(gostres_m)>=10)
@@ -492,24 +492,24 @@ handleBarPlot <- function(DB_source, sliderBarplot, barplotMode, from_barPlotSel
         }
         updateSliderInput(session, "sliderBarplot", max = nrow(gostres_m), value =sval)
       }
-      
+
       # Check mode of execution
       if(barplotMode == "-log10(P-value)"){
         gostres_sort <- gostres_m[order(gostres_m[["-log10(P-value)"]], decreasing = T),]
         drawBarplot(gostres_sort, "P_VALUES BARPLOT", DB_source, sliderBarplot, output)
         tbl_out <- gostres_sort[, c(1,2,3,4,9,5,6,7,8)]
-        
+
       }
       else { # Enrichment Mode
         gostres_sort <- gostres_m[order(gostres_m[["Enrichment Score"]], decreasing = T),]
         drawBarplot(gostres_sort, "ENRICHMENT SCORE", DB_source, sliderBarplot, output)
         tbl_out <- gostres_sort[, c(1,2,3,4,10,5,6,7,8)]
-        
+
       }
-      output$barplot_table <- DT::renderDataTable(head(tbl_out, sliderBarplot), server = FALSE, 
+      output$barplot_table <- DT::renderDataTable(head(tbl_out, sliderBarplot), server = FALSE,
                                                   extensions = c('Responsive', 'RowGroup', 'Buttons'),
                                                   options = list(
-                                                    dom = 'Bfrtip', 
+                                                    dom = 'Bfrtip',
                                                     buttons = list(list(extend='collection', buttons=c('csv', 'excel', 'pdf'), text="Download"))
                                                   ),rownames= FALSE, escape=F)
     }
@@ -519,33 +519,33 @@ handleBarPlot <- function(DB_source, sliderBarplot, barplotMode, from_barPlotSel
 #-drawing barplot functions--####
 # This function creates the respective barplot for -logpvalue or enrichment score
 # The height is variable and depends on the  slider input
-drawBarplot<- function(dframe, mode, DB_source, sliderBarplot, output){ 
+drawBarplot<- function(dframe, mode, DB_source, sliderBarplot, output){
   bar_colors <- list('GO:MF'= c("#dc3912","black"),
                      'GO:BP'= c("#ff9900","black"),
                      'GO:CC' = c("#109618","black"),
                      'KEGG' = c("#dd4477","black"),
-                     'REAC' = c("#3366cc", "white"), 
+                     'REAC' = c("#3366cc", "white"),
                      'WP' = c("#0099c6", "black"),
                      'TF' = c("#5574a6", "white"),
                      'MIRNA' = c("#22aa99", "black"),
                      'HPA' = c("#6633cc", "white"),
-                     'CORUM' = c("#66aa00", "black"), 
+                     'CORUM' = c("#66aa00", "black"),
                      'HP' = c("#990099", "white")
   )
-  if (mode == "P_VALUES BARPLOT") 
+  if (mode == "P_VALUES BARPLOT")
   {
     score="-log10(P-value)"
-  } 
-  else 
+  }
+  else
   { # ENRICHMENT SCORE BARPLOT
     score="Enrichment Score"
   }
-  
+
   if(sliderBarplot>nrow(dframe))
   {
     sliderBarplot <- nrow(dframe)
   }
-  
+
   ax <- as.numeric(unlist(dframe[[score]][1:sliderBarplot]))
   ay <- as.character(unlist(dframe[["Term Name"]][1:sliderBarplot]))
   asource <- as.character(unlist(dframe[["Source"]][1:sliderBarplot]))
@@ -563,7 +563,7 @@ drawBarplot<- function(dframe, mode, DB_source, sliderBarplot, output){
 
   pdf(NULL) #this prevents plot_ly from automatically writing a local PDF file with the plot
   output$barplot1 <- renderPlotly({bar})
-  
+
   #make a figure legend based on DB_source
   fig_legend = "<table style='border-spacing: 0;border-collapse: collapse;'><tr><td><b>Colors:&nbsp;&nbsp;</b></td>"
   for(i in 1:length(DB_source))
@@ -572,7 +572,7 @@ drawBarplot<- function(dframe, mode, DB_source, sliderBarplot, output){
   }
   fig_legend<-paste(fig_legend, "</tr></table>")
   output$bar_legend<- renderUI(HTML(fig_legend))
-  
+
   output$barplot <- renderUI({
     plotlyOutput("barplot1", height = height_barplot(sliderBarplot))
   })
@@ -594,8 +594,8 @@ height_barplot<-function(num_entries){
 # containing the gprofiler result row below
 handleManhattanClick <- function(output){
   currentTermID <-  event_data("plotly_click")$key #, source = "A"
-  
-  table_man <- barplot_table[grepl(currentTermID, barplot_table[["Term ID"]]), ] 
+
+  table_man <- barplot_table[grepl(currentTermID, barplot_table[["Term ID"]]), ]
   output$manhattan_table <- DT::renderDataTable(table_man, server = FALSE,
                                                 extensions = 'Responsive',
                                                 options = list(
@@ -628,8 +628,8 @@ handleManhattanSelect <- function(output){
 
 ####-----create literature results table-####
 create_literature_table <- function(datatable) {
-  
-  
+
+
   out <- DT::renderDataTable(server = F, {
     datatable(datatable,
               rownames = F,
@@ -651,11 +651,11 @@ create_literature_table <- function(datatable) {
 #-literature search: the main barplot function-##
 handleBarPlot_PMID <- function(DB_source, sliderBarplot, barplotMode, from_barPlotSelect, output, session){
   data_table <- barplot_table_PMID
-  
+
   if (!identical(DB_source, "")){
     pmid_m <- data_table
     pmid_m <- pmid_m[0,]
-    for (i in 1:length(DB_source)) 
+    for (i in 1:length(DB_source))
     {
       result= data_table[grepl(DB_source[[i]],data_table[["Source"]]),]
       if(nrow(result)>0)
@@ -676,30 +676,30 @@ handleBarPlot_PMID <- function(DB_source, sliderBarplot, barplotMode, from_barPl
         }
         updateSliderInput(session, "sliderBarplot_PMID", max = nrow(pmid_m), value =sval)
       }
-      
+
       # Check mode of execution
       if(barplotMode == "-log10(P-value)"){
         pmid_sort <- pmid_m[order(pmid_m[["-log10(P-value)"]], decreasing = T),]
         drawBarplot_PMID(pmid_sort, "P_VALUES BARPLOT", DB_source, sliderBarplot, output)
         tbl_out <- pmid_sort[, c(1,2,3,4,5,10,6,7,8,9)]
-        
+
       }
       else if (barplotMode == "-log10(FDR)")
       {
         pmid_sort <- pmid_m[order(pmid_m[["-log10(FDR)"]], decreasing = T),]
         drawBarplot_PMID(pmid_sort, "FDR BARPLOT", DB_source, sliderBarplot, output)
-        tbl_out <- pmid_sort[, c(1,2,3,4,5,11,6,7,8,9)]      
+        tbl_out <- pmid_sort[, c(1,2,3,4,5,11,6,7,8,9)]
       }
       else { # Enrichment Mode
         pmid_sort <- pmid_m[order(pmid_m[["Enrichment Score"]], decreasing = T),]
         drawBarplot_PMID(pmid_sort, "ENRICHMENT SCORE", DB_source, sliderBarplot, output)
         tbl_out <- pmid_sort[, c(1,2,3,4,5,12,6,7,8,9)]
-        
+
       }
-      output$barplot_table_PMID <- DT::renderDataTable(head(tbl_out, sliderBarplot), server = FALSE, 
+      output$barplot_table_PMID <- DT::renderDataTable(head(tbl_out, sliderBarplot), server = FALSE,
                                                        extensions = c('Responsive', 'RowGroup', 'Buttons'),
                                                        options = list(
-                                                         dom = 'Bfrtip', 
+                                                         dom = 'Bfrtip',
                                                          buttons = list(list(extend='collection', buttons=c('csv', 'excel', 'pdf'), text="Download"))
                                                        ),rownames= FALSE, escape=F)
     }
@@ -709,24 +709,24 @@ handleBarPlot_PMID <- function(DB_source, sliderBarplot, barplotMode, from_barPl
 #-PMID drawing barplot functions--####
 # This function creates the respective barplot for -logpvalue or enrichment score
 # The height is variable and depends on the  slider input
-drawBarplot_PMID<- function(dframe, mode, DB_source, sliderBarplot, output){ 
+drawBarplot_PMID<- function(dframe, mode, DB_source, sliderBarplot, output){
   bar_colors <- list('PubMed' = c("#3366cc", "white")
   )
-  
-  if (mode == "P_VALUES BARPLOT") 
+
+  if (mode == "P_VALUES BARPLOT")
   {
     score="-log10(P-value)"
-  } 
+  }
   else if(mode=="FDR BARPLOT")
   {
     score="-log10(FDR)"
   }
-  else 
+  else
   { # ENRICHMENT SCORE BARPLOT
     score="Enrichment Score"
   }
-  
-  
+
+
   if(sliderBarplot>nrow(dframe))
   {
     sliderBarplot <- nrow(dframe)
@@ -747,7 +747,7 @@ drawBarplot_PMID<- function(dframe, mode, DB_source, sliderBarplot, output){
   #, color=I(~color)
   pdf(NULL) #this prevents plot_ly from automatically writing a local PDF file with the plot
   output$barplot1_PMID <- renderPlotly({bar})
-  
+
   #make a figure legend based on DB_source
   fig_legend = "<table style='border-spacing: 0;border-collapse: collapse;'><tr><td><b>Colors:&nbsp;&nbsp;</b></td>"
   for(i in 1:length(DB_source))
@@ -756,7 +756,7 @@ drawBarplot_PMID<- function(dframe, mode, DB_source, sliderBarplot, output){
   }
   fig_legend<-paste(fig_legend, "</tr></table>")
   output$bar_legend_PMID<- renderUI(HTML(fig_legend))
-  
+
   output$barplot_PMID <- renderUI({
     plotlyOutput("barplot1_PMID", height = height_barplot(sliderBarplot))
   })
@@ -773,7 +773,7 @@ handleBarPlot_Pfam <- function(DB_source, sliderBarplot, barplotMode, from_barPl
   if (!identical(DB_source, "")){
     pmid_m <- data.frame()
     #pmid_m <- pmid_m[0,]
-    for (i in 1:length(DB_source)) 
+    for (i in 1:length(DB_source))
     {
       result<- data_table[grepl(DB_source[[i]],data_table[["Source"]]),]
       if(nrow(result)>0)
@@ -802,24 +802,24 @@ handleBarPlot_Pfam <- function(DB_source, sliderBarplot, barplotMode, from_barPl
         pmid_sort <- pmid_m[order(pmid_m[["-log10(P-value)"]], decreasing = T),]
         drawBarplot_Pfam(pmid_sort, "P_VALUES BARPLOT", DB_source, sliderBarplot, output)
         tbl_out <- pmid_sort[, c(1,2,3,4,5,10,6,7,8,9)]
-        
+
       }
       else if (barplotMode == "-log10(FDR)")
       {
         pmid_sort <- pmid_m[order(pmid_m[["-log10(FDR)"]], decreasing = T),]
         drawBarplot_Pfam(pmid_sort, "FDR BARPLOT", DB_source, sliderBarplot, output)
-        tbl_out <- pmid_sort[, c(1,2,3,4,5,11,6,7,8,9)]      
+        tbl_out <- pmid_sort[, c(1,2,3,4,5,11,6,7,8,9)]
       }
       else { # Enrichment Mode
         pmid_sort <- pmid_m[order(pmid_m[["Enrichment Score"]], decreasing = T),]
         drawBarplot_Pfam(pmid_sort, "ENRICHMENT SCORE", DB_source, sliderBarplot, output)
         tbl_out <- pmid_sort[, c(1,2,3,4,5,12,6,7,8,9)]
-        
+
       }
-      output$barplot_table_Pfam <- DT::renderDataTable(head(tbl_out, sliderBarplot), server = FALSE, 
+      output$barplot_table_Pfam <- DT::renderDataTable(head(tbl_out, sliderBarplot), server = FALSE,
                                                        extensions = c('Responsive', 'RowGroup', 'Buttons'),
                                                        options = list(
-                                                         dom = 'Bfrtip', 
+                                                         dom = 'Bfrtip',
                                                          buttons = list(list(extend='collection', buttons=c('csv', 'excel', 'pdf'), text="Download"))
                                                        ),rownames= FALSE, escape=F)
     }
@@ -829,33 +829,33 @@ handleBarPlot_Pfam <- function(DB_source, sliderBarplot, barplotMode, from_barPl
 #-FE aGO drawing barplot functions--####
 # This function creates the respective barplot for -logpvalue or enrichment score
 # The height is variable and depends on the  slider input
-drawBarplot_Pfam <- function(dframe, mode, DB_source, sliderBarplot, output){ 
+drawBarplot_Pfam <- function(dframe, mode, DB_source, sliderBarplot, output){
   bar_colors <- list('UniProt keywords' = c("#0099c6", "black"),
-                     'PFAM (Protein FAMilies)' = c("#66aa00", "black"), 
+                     'PFAM (Protein FAMilies)' = c("#66aa00", "black"),
                      'INTERPRO' = c("#990099", "white"),
                      'UniProt' = c("#0099c6", "black"),
                      'PFAM' = c("#66aa00", "black"),
                      'Disease Ontology' = c("#ff9900", "black")
   )
-  
-  if (mode == "P_VALUES BARPLOT") 
+
+  if (mode == "P_VALUES BARPLOT")
   {
     score="-log10(P-value)"
-  } 
+  }
   else if(mode=="FDR BARPLOT")
   {
     score="-log10(FDR)"
   }
-  else 
+  else
   { # ENRICHMENT SCORE BARPLOT
     score="Enrichment Score"
   }
-  
+
   if(sliderBarplot>nrow(dframe))
   {
     sliderBarplot <- nrow(dframe)
   }
-  
+
   ax <- as.numeric(unlist(dframe[[score]][1:sliderBarplot]))
   ay <- as.character(unlist(dframe[["Title"]][1:sliderBarplot]))
   asource <- as.character(unlist(dframe[["Source"]][1:sliderBarplot]))
@@ -872,7 +872,7 @@ drawBarplot_Pfam <- function(dframe, mode, DB_source, sliderBarplot, output){
   #, color=I(~color)
   pdf(NULL) #this prevents plot_ly from automatically writing a local PDF file with the plot
   output$barplot1_Pfam <- renderPlotly({bar})
-  
+
   #make a figure legend based on DB_source
   fig_legend = "<table style='border-spacing: 0;border-collapse: collapse;'><tr><td><b>Colors:&nbsp;&nbsp;</b></td>"
   for(i in 1:length(DB_source))
@@ -881,7 +881,7 @@ drawBarplot_Pfam <- function(dframe, mode, DB_source, sliderBarplot, output){
   }
   fig_legend<-paste(fig_legend, "</tr></table>")
   output$bar_legend_Pfam<- renderUI(HTML(fig_legend))
-  
+
   output$barplot_Pfam <- renderUI({
     plotlyOutput("barplot1_Pfam", height = height_barplot(sliderBarplot))
   })
@@ -895,7 +895,7 @@ drawBarplot_Pfam <- function(dframe, mode, DB_source, sliderBarplot, output){
 ##Method to create legend for the network viewer-###
 
 create_network_legend <- function(network_type, edge_meaning) {
-  
+
   if (tolower(network_type) =="string")
   {
     table_nodes="<table>
@@ -911,9 +911,9 @@ create_network_legend <- function(network_type, edge_meaning) {
     <tr><td><img src='images/string_icons/node_unknown_structure_stitch.png' /></td><td>Proteins with unknown 3D structure</td></tr>
     <tr><td><img src='images/string_icons/node_chemical.png' /></td><td>Chemical compounds</td></tr>
     </table>
-    "    
+    "
   }
-  
+
   if(tolower(edge_meaning) == "evidence")
   {
     table_edges="<table style='width:70%'>
@@ -937,7 +937,7 @@ create_network_legend <- function(network_type, edge_meaning) {
     </tr>
     </table>
     "
-    
+
   }
   else if (tolower(edge_meaning=="confidence"))
   {
@@ -953,7 +953,7 @@ create_network_legend <- function(network_type, edge_meaning) {
     </tr>
     </table>
     "
-    
+
   }
   else if (tolower(edge_meaning=="actions"))
   {
@@ -986,7 +986,7 @@ create_network_legend <- function(network_type, edge_meaning) {
     table_edges="<p>Edge thickness represents the extent of <b>binding affinity</b>.</p>"
   }
   legend <-renderUI({
-    
+
     fluidRow(
       column(4,
              div(
@@ -1002,18 +1002,18 @@ create_network_legend <- function(network_type, edge_meaning) {
       )
     )
   })
-  
-  
+
+
   return(legend)
-  
+
 }
 
 
-# 
+#
 # #-Create Table of Available organisms-####
 table_of_organisms <- function(){
   organisms_html <- organisms[, c(1,2,3,4,5)]
-  
+
   organisms_html$Taxonomy_ID <- paste0("<a href='https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=", organisms_html$Taxonomy_ID, "' target='_blank'>", organisms_html$Taxonomy_ID, "</a>")
   organisms_html$Species_Name <- paste0("<i>", organisms_html$Species_Name,"</i>")
   for (i in 1:nrow(organisms_html))
@@ -1028,12 +1028,12 @@ table_of_organisms <- function(){
       organisms_html$KEGG[i] <- "Not Available"
     }
   }
-  
+
   table_html <- DT::renderDataTable(organisms_html, server = F,
                       colnames = c("Taxonomy ID", "Species Name", "Common Name", "g:Profiler ID", "KEGG Code"),
                       extensions = c('Buttons'),
                       options = list(
-                        dom = 'Bfrti', 
+                        dom = 'Bfrti',
                         buttons = list(list(extend='collection', buttons=c('csv', 'excel', 'pdf'), text="Download")),
                         paging=F, scrollY="500px", scroller=T
                       ),rownames= T, escape=F)

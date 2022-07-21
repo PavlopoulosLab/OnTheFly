@@ -1,6 +1,6 @@
 # OnTheFly<sup>2.0</sup>
 
-A text-mining web application for automated named entity recognition, document annotation, network and functional enrichment analysis 
+A text-mining web application for automated named entity recognition, document annotation, network and functional enrichment analysis
 
 ----
 
@@ -25,8 +25,8 @@ A text-mining web application for automated named entity recognition, document a
 
 ----
 ## Overview
-OnTheFly<sup>2.0</sup>  is a web application to aid users collecting biological information from documents. 
-With OnTheFly<sup>2.0</sup>  one is able to:  
+OnTheFly<sup>2.0</sup>  is a web application to aid users collecting biological information from documents.
+With OnTheFly<sup>2.0</sup>  one is able to:
 -   Extract bioentities from individual articles in formats such as plain text, Microsoft Word, Excel and PDF files.
 -   Scan images and identify terms by using Optical Character Recognition (OCR).
 -   Handle multiple files simultaneously.
@@ -35,7 +35,7 @@ With OnTheFly<sup>2.0</sup>  one is able to:
 -   Perform functional enrichment analysis on a selected group of terms.
 -   Generate and visualize protein-protein and protein-chemical interaction networks.
 
-Online version: http://bib.fleming.gr:3838/OnTheFly/, http://onthefly.pavlopouloslab.info
+Online version: http://onthefly.pavlopouloslab.info, https://bib.fleming.gr:8084/app/onthefly, http://bib.fleming.gr:3838/OnTheFly/
 
 **Publication:** Baltoumas, F.A., Zafeiropoulou, S., Karatzas, E., Paragkamian, S., Thanati, F., Iliopoulos, I., Eliopoulos, A.G.,  Schneider, R., Jensen, L.J., Pafilis, E., Pavlopoulos, G.A. (2021) **OnTheFly<sup>2.0</sup>: a text-mining web application for automated biomedical entity recognition, document annotation, network and functional enrichment analysis**. NAR Genomics and Bioinformatics, 2021, Vol. 3, No. 4. doi: [10.1093/nargab/lqab090](https://doi.org/10.1093/nargab/lqab090)
 
@@ -98,7 +98,7 @@ Linux is the native environment OnTheFly<sup>2.0</sup> is designed to operate in
 3. Install all required R libraries
 4. Open the tool's project file (OnTheFly.rproj) in R-studio, select **ui.R**, **server.R** or **global.R** and click "Run App" **or** (alternatively), configure shiny-server and setup OnTherFly as a web service.
 
-To aid you in installing and configuring OnTheFly<sup>2.0</sup>, we provide two installation scripts, "install_dependencies.sh" and "install_libraries.R". 
+To aid you in installing and configuring OnTheFly<sup>2.0</sup>, we provide two installation scripts, "install_dependencies.sh" and "install_libraries.R".
 
 1. The first script ("install_dependencies.sh") installs and configures all required software in your Linux distribution.  The file provided is written for Debian and Debian-based (Ubuntu, LinuxMint etc) and can be run as follows:
 
@@ -134,7 +134,7 @@ In this option, everything will be installed in WSL and be operated through the 
 2. Install and setup (root access, passwords etc) a Linux distribution from the collection available in the [Windows Store](https://www.microsoft.com/en-us/search/shop/apps?q=Linux).  For the purposes of this guide, an Ubuntu or Debian installation is assumed.
 3. Enable the use of GUI applications in WSL, following [this guide](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242).
 4. Open a Linux terminal window and run the "install_dependencies.sh" script to install all required software:
-    
+
 >     sudo bash install_dependencies.sh
 
 or
@@ -171,7 +171,7 @@ or
 
 4.  Install [R](https://cloud.r-project.org/bin/windows/) (version 3.6.1 or newer) and [R-studio](https://www.rstudio.com/products/rstudio/download/#download) for Windows.
 5. Install all required libraries in R (or in R-studio), by loading and running the "install_libraries.R" script.
-6. Open the tool's project file (OnTheFly.rproj) in R-studio, select  **ui.R**, **server.R** or **global.R** and click "Run App".  The first time you do this, your antivirus or firewall may request that you grant access to a program called "wsl".  This is a component of the WSL environment that allows you to run Linux applications in native Windows (i.e. outside the WSL environment). 
+6. Open the tool's project file (OnTheFly.rproj) in R-studio, select  **ui.R**, **server.R** or **global.R** and click "Run App".  The first time you do this, your antivirus or firewall may request that you grant access to a program called "wsl".  This is a component of the WSL environment that allows you to run Linux applications in native Windows (i.e. outside the WSL environment).
 
 
 ### Run using Docker
@@ -184,7 +184,7 @@ A Docker repository for OnTheFly<sup>2.0</sup> can be found at [https://hub.dock
 >     docker pull pavlopouloslab/onthefly
 
 4. Create a container and run the image. You can do this through Docker Desktop/Portainer, or through the command line. In any case, you will need to assign a port for the created container. Note that the image, by default, has port 3838 exposed for the created container. Therefore, published ports should be set-up in the format XXXX:3838, where "XXXX" is the port assigned to the host (your computer), e.g. 8084. This can be done with a command such as the following:
- 
+
 >     docker run -ti --rm -p 8084:3838 pavlopouloslab/onthefly
 
 and in this case, the container would be accessible through a web browser in the address http://localhost:8084.
