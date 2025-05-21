@@ -35,7 +35,7 @@ With OnTheFly<sup>2.0</sup>  one is able to:
 -   Perform functional enrichment analysis on a selected group of terms.
 -   Generate and visualize protein-protein and protein-chemical interaction networks.
 
-Online version: http://onthefly.pavlopouloslab.info, https://bib.fleming.gr:8084/app/onthefly, http://bib.fleming.gr:3838/OnTheFly/
+Online version: https://bib.fleming.gr:8084/app/onthefly
 
 **Publication:** Baltoumas, F.A., Zafeiropoulou, S., Karatzas, E., Paragkamian, S., Thanati, F., Iliopoulos, I., Eliopoulos, A.G.,  Schneider, R., Jensen, L.J., Pafilis, E., Pavlopoulos, G.A. (2021) **OnTheFly<sup>2.0</sup>: a text-mining web application for automated biomedical entity recognition, document annotation, network and functional enrichment analysis**. NAR Genomics and Bioinformatics, 2021, Vol. 3, No. 4. doi: [10.1093/nargab/lqab090](https://doi.org/10.1093/nargab/lqab090)
 
